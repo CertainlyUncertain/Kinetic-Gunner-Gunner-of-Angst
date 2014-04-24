@@ -22,19 +22,19 @@ class GameMgr:
     def game1(self):
         # Create Terrain
         # Create Player
-        player = self.engine.entityMgr.createEnt(ent.PlayerJet, Vector3(1000,750,1000), 0, 500)
+        player = self.engine.entityMgr.createEnt(ent.PlayerJet, Vector3(1000,1000,1000), 0, 750)
         # Add Commands
         speed = []
-        yaw = [ Expression( 0, 3 ), Expression( 270, 7 ), Expression( 0, 3 ), Expression( -270, 7 ) ]
-        pitch = [ ]#Expression( 0, 5 ), Expression( -15, 3 ), Expression( 15, 3 ) ]
+        yaw = [ Expression( 0, 3 ), Expression( 270, 5 ), Expression( 0, 3 ), Expression( -270, 5 ) ]
+        pitch = [ Expression( 0, 5 ), Expression( -45, 3 ), Expression( 60, 5 ), Expression( -45, 3 ) ]
         player.aspects[0].addMultiple( speed, yaw, pitch )
 
         # Create Enemy Spawns
-        for i in range(0,21):
-            x = random.randrange(-750, 750)
-            y = random.randrange(-150,150)
-            z = random.randrange(-750, 750)
-            created = self.engine.entityMgr.createEnt(ent.EnemyJet, player.pos - Vector3(x,y,z), 0, 525)
+        for i in range(0,10):
+            x = random.randrange(-5000, 5000)
+            y = random.randrange(-500,2500)
+            z = random.randrange(-5000, 5000)
+            created = self.engine.entityMgr.createEnt(ent.EnemyJet, player.pos + Vector3(x,y,z), 0, 755)
             created.follow( player )
 
         import time

@@ -16,7 +16,7 @@ class Expression:
         self.change -= rate * dt
         self.time += dt
         print "Total: %f, Rate: %f, Remaining: %f " % (self.change, rate, (self.duration - self.time))
-        return math.fabs(rate)
+        return self.change, math.fabs(rate)
 
     def complete(self):
         if self.time > self.duration:

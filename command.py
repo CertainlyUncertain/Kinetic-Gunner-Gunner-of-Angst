@@ -35,13 +35,20 @@ class Follow( Command ):
         point = Vector3(0, self.target.pos.y, 0)
         point.x = self.target.pos.x + self.offset * math.cos(math.radians(self.target.yaw))
         point.z = self.target.pos.z + self.offset * -math.sin(math.radians(self.target.yaw))
-        # Check Distance
+        # Check Planar Distance
         distance = math.sqrt((point.x - self.ent.pos.x)**2 + (point.z - self.ent.pos.z)**2)
-        # Set Orientation
+        # Set Planar Orientation (Yaw)
         self.ent.desiredYaw = self.getDesiredHeadingToTargetPosition(point)
-        if distance < 250:
+        # Check Distance
+        if distance < 300:
             self.ent.desiredSpeed = self.target.speed
             self.ent.desiredYaw = self.target.yaw
         else:
             self.ent.desiredSpeed = self.ent.maxSpeed
+        # Height Difference (Pitch)
+        difference = point.y - self.ent.pos.y
+        if math.fabs(difference) > 100:
+            self.ent.desiredPitch = math.degrees(math.atan2(difference, distance))
+        else:
+            self.ent.desiredPitch = self.target.pitch
 #---------------------------------------------------------------------------------------------------

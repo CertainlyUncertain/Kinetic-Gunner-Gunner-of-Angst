@@ -11,11 +11,8 @@ import utils
 
 #-----------------------------------------------------------------------------------------
 class Entity:
-    pos  = Vector3(0, 0, 0)
-    vel  = Vector3(0, 0, 0)
-    yaw  = 0
 
-    aspectTypes = [Physics, Renderer, UnitAI]
+    aspectTypes = []
     
     def __init__(self, engine, id, pos = Vector3(0,0,0), mesh = 'robot.mesh', vel = Vector3(0, 0, 0), yaw = 0):
         self.engine = engine
@@ -25,7 +22,8 @@ class Entity:
         self.vel = vel
         self.mesh = mesh
         self.deltaSpeed = 10
-        self.deltaYaw   = 0.3
+        self.deltaYaw   = 0.0
+        self.deltaPitch = 0.0
         self.speed = 0.0
         self.heading = 0.0
         self.aspects = []
@@ -54,6 +52,7 @@ class Entity:
         return x
 
 #---------------------------------------------------------------------------------------------------
+
 class PlayerJet(Entity):
     def __init__(self, engine, id, pos = Vector3(0,0,0), orientation = 0, speed = 500):
         Entity.__init__(self, engine, id, pos = pos )
@@ -72,10 +71,15 @@ class PlayerJet(Entity):
         self.desiredPitch = 0
         self.pitch = 0
         self.pitchRate  = 50
+        # Roll -------------------------
+        self.desiredRoll = orientation
+        self.roll = orientation
+        self.rollRate  = 60
 
         self.aspectTypes = [ Pathing, Physics, Renderer ]
 
 #---------------------------------------------------------------------------------------------------
+
 class EnemyJet(Entity):
     def __init__(self, engine, id, pos = Vector3(0,0,0), orientation = 0, speed = 525):
         Entity.__init__(self, engine, id, pos = pos )
@@ -94,5 +98,10 @@ class EnemyJet(Entity):
         self.desiredPitch = orientation
         self.pitch = orientation
         self.pitchRate  = 50
+        # Roll -------------------------
+        self.desiredRoll = orientation
+        self.roll = orientation
+        self.rollRate  = 60
         
+        self.aspectTypes = [Physics, Renderer, UnitAI]
 #---------------------------------------------------------------------------------------------------

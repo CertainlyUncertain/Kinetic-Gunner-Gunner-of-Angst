@@ -21,21 +21,29 @@ class Physics:
         z = self.ent.speed * -math.sin( math.radians( self.ent.yaw ) )
         self.ent.pos = self.ent.pos + ( Vector3(x,y,z) * dtime )
 
-        #------------heading----------------------------------
+        # Yaw -----------------------------------
         timeScaledYaw = self.ent.yawRate * dtime
         angleDiff = utils.diffAngle(self.ent.desiredYaw, self.ent.yaw)
-        dYaw = utils.clamp(angleDiff, -timeScaledYaw, timeScaledYaw)
-        print self.ent.uiname
-        print "angleDiff: %f, timeScaledYaw: %f,  dYaw: %f " % (angleDiff, timeScaledYaw, dYaw )
+        self.ent.deltaYaw = utils.clamp(angleDiff, -timeScaledYaw, timeScaledYaw)
+        print '---' + self.ent.uiname + '---'
+        print "angleDiff: %f, timeScaledYaw: %f,  deltaYaw: %f " % (angleDiff, timeScaledYaw, self.ent.deltaYaw )
         print "yaw: %f, desiredYaw: %f, yawRate: %f" % (self.ent.yaw, self.ent.desiredYaw, self.ent.yawRate)
-        self.ent.yaw = utils.fixAngle( self.ent.yaw + dYaw)
-
+        self.ent.yaw = utils.fixAngle( self.ent.yaw + self.ent.deltaYaw)
+        # Pitch ---------------------------------
         timeScaledPitch = self.ent.pitchRate * dtime
         angleDiff = utils.diffAngle(self.ent.desiredPitch, self.ent.pitch)
-        dPitch = utils.clamp(angleDiff, -timeScaledPitch, timeScaledPitch)
-        print "angleDiff: %f, timeScaledPitch: %f,  dPitch: %f " % (angleDiff, timeScaledPitch, dPitch )
+        self.ent.deltaPitch = utils.clamp(angleDiff, -timeScaledPitch, timeScaledPitch)
+        print "angleDiff: %f, timeScaledPitch: %f,  deltaPitch: %f " % (angleDiff, timeScaledPitch, self.ent.deltaPitch )
         print "pitch: %f, desiredPitch: %f, pitchRate: %f" % (self.ent.pitch, self.ent.desiredPitch, self.ent.pitchRate)
+        self.ent.pitch = utils.fixAngle( self.ent.pitch + self.ent.deltaPitch)
+        # Roll ----------------------------------
+        if dtime > 0.001:
+            self.ent.desiredRoll = -self.ent.deltaYaw / dtime
+        timeScaledRoll = self.ent.rollRate * dtime
+        angleDiff = utils.diffAngle(self.ent.desiredRoll, self.ent.roll)
+        dRoll = utils.clamp(angleDiff, -timeScaledRoll, timeScaledRoll)
+        print "angleDiff: %f, timeScaledRoll: %f,  dRoll: %f " % (angleDiff, timeScaledRoll, dRoll )
+        print "roll: %f, desiredRoll: %f, rollRate: %f" % (self.ent.roll, self.ent.desiredRoll, self.ent.rollRate)
         print "---"
-        self.ent.pitch = utils.fixAngle( self.ent.pitch + dPitch)
-
+        self.ent.roll = utils.fixAngle( self.ent.roll + dRoll)
 #-----------------------------------------------------------------------------------------
