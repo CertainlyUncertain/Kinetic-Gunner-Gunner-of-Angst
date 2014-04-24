@@ -78,7 +78,10 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
         self.leftShiftDown = self.keyboard.isKeyDown(OIS.KC_LSHIFT)
         self.leftCtrlDown = self.keyboard.isKeyDown(OIS.KC_LCONTROL)
         pass
-
+        
+    def handleCamera(self, dtime):
+        pass
+        
     def keyPressed(self, evt):
         '''Move the camera using keyboard input.'''
         # Forward

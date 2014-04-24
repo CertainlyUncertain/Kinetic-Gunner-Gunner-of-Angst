@@ -17,8 +17,6 @@ class Renderer:
         self.rollNode = self.pitchNode.createChildSceneNode(self.ent.uiname + 'rNode')
         self.pitchNode.yaw( ogre.Degree(90) )
         self.rollNode.attachObject(self.gent)
-
-        
         
     def tick(self, dtime):
         #----------update scene node position and orientation-----------------------------------
@@ -26,6 +24,6 @@ class Renderer:
         self.yawNode.resetOrientation()
         self.yawNode.yaw( ogre.Degree(self.ent.yaw) )
         #self.pitchNode.resetOrientation()
-        #self.pitchNode.pitch( ogre.Degree(self.ent.pitch) )
-        #self.rollNode.resetOrientation()
-        #self.rollNode.roll( ogre.Degree(self.ent.dYaw / 10) )
+        self.pitchNode.pitch( ogre.Degree(-self.ent.deltaPitch) )
+        self.rollNode.resetOrientation()
+        self.rollNode.roll( ogre.Degree(self.ent.roll) )

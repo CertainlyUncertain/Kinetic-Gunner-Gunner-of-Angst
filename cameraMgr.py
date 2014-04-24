@@ -10,7 +10,7 @@ class CamMgr:
         self.camPitch = 0.0
         self.pitchSpeed = -0.1
         self.pitchMax = 90.0
-        self.pitchMin = -90.0
+        self.pitchMin = 0.0
         self.debugCam = False
         self.toggle = 0.1
         self.toggleMax = 0.1
@@ -62,9 +62,11 @@ class CamMgr:
             if( self.debugCam ):
                 self.camYawNode = self.engine.gfxMgr.debugYawNode
                 self.camPitchNode = self.engine.gfxMgr.debugPitchNode
+                self.pitchMin = -90.0
             else:
                 self.camYawNode = self.engine.gfxMgr.camYawNode
                 self.camPitchNode = self.engine.gfxMgr.camPitchNode
+                self.pitchMin = 0.0
             self.camera.parentSceneNode.detachObject(self.camera)
             self.camPitchNode.attachObject(self.camera)
     
