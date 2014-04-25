@@ -36,11 +36,11 @@ class CamMgr:
             self.toggle -= dt
         self.camYawNode.translate(self.camYawNode.orientation * self.transVector * dt)
         self.transVector = Vector3(0,0,0)
-        self.camYawNode.yaw(ogre.Radian(self.yawRot))
+        self.Yaw(self.yawRot)
         self.yawRot = 0.0
-        self.camPitchNode.pitch(ogre.Radian(self.pitchRot))
+        self.Pitch(self.pitchRot)
         self.pitchRot = 0.0
-        self.camPitchNode.roll(ogre.Radian(self.rollRot))
+        self.camPitchNode.roll(ogre.Degree(self.rollRot))
         self.rollRot = 0.0
 
     def Yaw(self, amount):

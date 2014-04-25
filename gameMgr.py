@@ -26,7 +26,7 @@ class GameMgr:
         # Add Commands
         speed = []
         yaw = [ Expression( 0, 3 ), Expression( 270, 5 ), Expression( 0, 3 ), Expression( -270, 5 ) ]
-        pitch = [ Expression( 0, 5 ), Expression( -45, 3 ), Expression( 60, 5 ), Expression( -45, 3 ) ]
+        pitch = [ Expression( 0, 5 ), Expression( 30, 3 ), Expression( -60, 6 ), Expression( 30, 3 ) ]
         player.aspects[0].addMultiple( speed, yaw, pitch )
 
         # Create Enemy Spawns
@@ -35,10 +35,15 @@ class GameMgr:
             y = random.randrange(-500,2500)
             z = random.randrange(-5000, 5000)
             created = self.engine.entityMgr.createEnt(ent.EnemyJet, player.pos + Vector3(x,y,z), 0, 755)
-            created.follow( player )
+            i = random.randint(1,2)
+            x = random.randint(125, 175) * (-1)**i
+            y = random.randrange(50,100)
+            i = random.randint(1,2)
+            z = random.randrange(125, 175) * (-1)**i
+            created.follow( player, Vector3(x,y,z) )
 
         import time
-        #time.sleep(20)
+
         # Set UI Elements
 
 

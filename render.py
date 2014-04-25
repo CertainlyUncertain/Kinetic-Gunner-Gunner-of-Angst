@@ -21,9 +21,9 @@ class Renderer:
     def tick(self, dtime):
         #----------update scene node position and orientation-----------------------------------
         self.yawNode.setPosition(self.ent.pos)
-        self.yawNode.resetOrientation()
-        self.yawNode.yaw( ogre.Degree(self.ent.yaw) )
+        #self.yawNode.resetOrientation()
+        self.yawNode.yaw( ogre.Degree(self.ent.deltaYaw) )
         #self.pitchNode.resetOrientation()
         self.pitchNode.pitch( ogre.Degree(-self.ent.deltaPitch) )
-        self.rollNode.resetOrientation()
-        self.rollNode.roll( ogre.Degree(self.ent.roll) )
+        #self.rollNode.resetOrientation()
+        self.rollNode.roll( ogre.Degree(self.ent.deltaRoll) )
