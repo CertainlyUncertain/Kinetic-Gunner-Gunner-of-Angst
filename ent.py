@@ -21,9 +21,9 @@ class Entity:
         self.pos = pos
         self.vel = vel
         self.mesh = mesh
-        self.deltaSpeed = 10
         self.deltaYaw   = 0.0
         self.deltaPitch = 0.0
+        self.deltaRoll = 0.0
         self.speed = 0.0
         self.heading = 0.0
         self.aspects = []
@@ -39,9 +39,6 @@ class Entity:
     def tick(self, dtime):
         for aspect in self.aspects:
             aspect.tick(dtime)
-
-    def follow( self, target ):
-        self.aspects[2].addCommand( Follow( self, target ) )
         
     def stop(self):
         self.desiredSpeed = 0
@@ -56,6 +53,8 @@ class Entity:
 class PlayerJet(Entity):
     def __init__(self, engine, id, pos = Vector3(0,0,0), orientation = 0, speed = 500):
         Entity.__init__(self, engine, id, pos = pos )
+        # General
+        self.aspectTypes = [ Pathing, Physics, Renderer ]
         self.mesh = 'razor.mesh'
         self.uiname = 'PlayerJet' + str(id)
         # Speed ------------------------
@@ -74,15 +73,15 @@ class PlayerJet(Entity):
         # Roll -------------------------
         self.desiredRoll = orientation
         self.roll = orientation
-        self.rollRate  = 60
-
-        self.aspectTypes = [ Pathing, Physics, Renderer ]
+        self.rollRate  = 90
 
 #---------------------------------------------------------------------------------------------------
 
 class EnemyJet(Entity):
     def __init__(self, engine, id, pos = Vector3(0,0,0), orientation = 0, speed = 525):
         Entity.__init__(self, engine, id, pos = pos )
+        # General
+        self.aspectTypes = [ UnitAI, Physics, Renderer ]
         self.mesh = 'RZR-002.mesh'
         self.uiname = 'EnemyJet' + str(id)
         # Speed ------------------------
@@ -97,11 +96,13 @@ class EnemyJet(Entity):
         # Pitch ------------------------
         self.desiredPitch = orientation
         self.pitch = orientation
-        self.pitchRate  = 50
+        self.pitchRate  = 60
         # Roll -------------------------
         self.desiredRoll = orientation
         self.roll = orientation
-        self.rollRate  = 60
+        self.rollRate  = 90
         
-        self.aspectTypes = [Physics, Renderer, UnitAI]
+    def follow( self, target, offset ):
+        self.aspects[0].addCommand( Follow( self, target, offset ) )
+        
 #---------------------------------------------------------------------------------------------------

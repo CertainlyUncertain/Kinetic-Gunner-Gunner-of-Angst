@@ -15,7 +15,7 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
         OIS.MouseListener.__init__(self)
         OIS.JoyStickListener.__init__(self)
         self.move = 500
-        self.rotate = 0.01
+        self.rotate = 25
         self.toggle = 0.1
         self.selectionRadius = 100
         pass
@@ -28,7 +28,8 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
         paramList = [("WINDOW", str(windowHandle))]
 
         if os.name == "nt":
-            t = [("w32_mouse","DISCL_FOREGROUND"), ("w32_mouse", "DISCL_NONEXCLUSIVE")]
+            #t = [("w32_mouse","DISCL_FOREGROUND"), ("w32_mouse", "DISCL_NONEXCLUSIVE")]
+            t = [("w32_mouse","DISCL_FOREGROUND"), ("w32_mouse", "DISCL_EXCLUSIVE")]
         else:
             t = [("x11_mouse_grab", "true"), ("x11_mouse_hide", "true")]
             #t = [("x11_mouse_grab", "false"), ("x11_mouse_hide", "true")]
@@ -52,6 +53,7 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
             self.keyboard.setEventCallback(self)
         if self.mouse:
             self.mouse.setEventCallback(self)
+            self.windowResized( renderWindow )
  
         import random
         self.randomizer = random
@@ -70,19 +72,33 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
     def tick(self, dtime):
         self.keyboard.capture()
         self.mouse.capture()
-        self.keyPressed(dtime)
+        self.handleCamera(dtime)
         self.handleModifiers(dtime)
         pass
+        
+    # Keyboard Listener ----------------------------------------------------- #
+    def keyPressed(self, evt):
+        '''Handles Toggleable Key Presses'''
+        # Swap Cameras (Between First-Person and Debug Views)
+        if self.keyboard.isKeyDown(OIS.KC_G):
+            self.engine.camMgr.Swap()
+        # Pause
+        if self.keyboard.isKeyDown(OIS.KC_SPACE):
+            time.sleep(10)
+        # Quit
+        if self.keyboard.isKeyDown(OIS.KC_ESCAPE):
+            self.engine.stop()
+        return True
 
+    def keyReleased(self, evt):
+        return True
+    
     def handleModifiers(self, dtime):
         self.leftShiftDown = self.keyboard.isKeyDown(OIS.KC_LSHIFT)
         self.leftCtrlDown = self.keyboard.isKeyDown(OIS.KC_LCONTROL)
         pass
         
     def handleCamera(self, dtime):
-        pass
-        
-    def keyPressed(self, evt):
         '''Move the camera using keyboard input.'''
         # Forward
         if self.keyboard.isKeyDown(OIS.KC_W):
@@ -104,38 +120,25 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
             self.engine.camMgr.transVector.y -= self.move          
         # Yaw
         if self.keyboard.isKeyDown(OIS.KC_Q):
-            self.engine.camMgr.yawRot = self.rotate
+            self.engine.camMgr.yawRot = -self.rotate
         # Yaw
         if self.keyboard.isKeyDown(OIS.KC_E):
-            self.engine.camMgr.yawRot = -self.rotate
+            self.engine.camMgr.yawRot = self.rotate
         # Pitch
         if self.keyboard.isKeyDown(OIS.KC_Z):
-            self.engine.camMgr.pitchRot = self.rotate
+            self.engine.camMgr.pitchRot = -self.rotate
         # Pitch
         if self.keyboard.isKeyDown(OIS.KC_X):
-            self.engine.camMgr.pitchRot = -self.rotate
+            self.engine.camMgr.pitchRot = self.rotate
         # Roll
         if self.keyboard.isKeyDown(OIS.KC_R):
             self.engine.camMgr.rollRot = self.rotate
         # Roll
         if self.keyboard.isKeyDown(OIS.KC_V):
             self.engine.camMgr.rollRot = -self.rotate
-        # Swap Cameras (Between First-Person and Debug Views)
-        if self.keyboard.isKeyDown(OIS.KC_G):
-            self.engine.camMgr.Swap()
-        # Pause
-        if self.keyboard.isKeyDown(OIS.KC_SPACE):
-            time.sleep(10)
-        # Quit
-        if self.keyboard.isKeyDown(OIS.KC_ESCAPE):
-            self.engine.stop()
-
-        return True
-
-    def keyReleased(self, evt):
-        return True
-    
-    # MouseListener
+        pass
+        
+    # MouseListener --------------------------------------------------------- #
     def mouseMoved(self, evt):
         currMouse = self.mouse.getMouseState()
         self.engine.camMgr.Yaw(currMouse.X.rel)
@@ -143,90 +146,57 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
         return True
 
     def mousePressed(self, evt, id):
-        #if id == OIS.MB_Left:
-            #self.handleMouseSelection(evt)
+        if id == OIS.MB_Left:
+            self.handleLeftClick(evt)
 
         #elif id == OIS.MB_Right:
-            #self.handleMouseOrders(evt)
+            #self.handleRightClick(evt)
         return True
 
-    def handleMouseSelection(self, evt):
+    def handleLeftClick(self, evt):
         self.mouse.capture()
         self.ms = self.mouse.getMouseState()
-        print str(self.ms)
 
         self.ms.width = self.engine.gfxMgr.viewPort.actualWidth 
         self.ms.height = self.engine.gfxMgr.viewPort.actualHeight
         self.mousePos = (self.ms.X.abs/float(self.ms.width), self.ms.Y.abs/float(self.ms.height))
-        mouseRay = self.engine.gfxMgr.camera.getCameraToViewportRay(*self.mousePos)
-        result  =  mouseRay.intersects(self.engine.gfxMgr.groundPlane)
-
-        if result.first:
-            pos =  mouseRay.getPoint(result.second)
-            self.mousePosWorld = pos
-
-            closest = None
-            closestDistance = self.selectionRadius * self.selectionRadius
-            for ent in self.engine.entityMgr.ents.values():
-                distSquared =  ent.pos.squaredDistance(pos)
-                if distSquared < closestDistance:
-                    closest = ent
-                    closestDistance = distSquared
-
-            if closest: # One level deep
-                if self.leftShiftDown:
-                    self.engine.selectionMgr.addSelectedEnt(closest)
+        mouseRay = self.engine.gfxMgr.camera.getCameraToViewportRay(0.5, 0.5)
+        # Loop Entities
+        targ = None
+        for eid, ent in self.engine.entityMgr.ents.iteritems():
+            result  =  mouseRay.intersects(ent.aspects[2].rollNode._getWorldAABB())
+            if result.first:
+                if not targ:
+                    targ = ent
+                    min = result.second
                 else:
-                    self.engine.selectionMgr.selectEnt(closest)
-            else:
-                self.engine.selectionMgr.killSelection()
+                    if result.second < min:
+                        targ = ent
+                        min = result.second
+                print "Direct Hit!"
 
-    def handleMouseOrders(self, evt):
+        targetRay = self.engine.gfxMgr.camera.getCameraToViewportRay(0.5, 0.5)
+        raySceneQuery = self.engine.gfxMgr.sceneManager.createRayQuery(ogre.Ray())
+        raySceneQuery.setSortByDistance( True )
+        raySceneQuery.setRay(targetRay)
+
+        result = raySceneQuery.execute()
+        if len(result) > 0:
+            for item in result:
+                if item.movable:
+                    print item.movable.getName()
+                # self.currentObject.setPosition(item.worldFragment.singleIntersection)
+        self.engine.gfxMgr.sceneManager.destroyQuery(raySceneQuery)
+
+    def handleRightClick(self, evt):
         self.mouse.capture()
         self.ms = self.mouse.getMouseState()
-        print str(self.ms)
-        selection = self.engine.selectionMgr.getSelected()
-
-        self.ms.width = self.engine.gfxMgr.viewPort.actualWidth 
-        self.ms.height = self.engine.gfxMgr.viewPort.actualHeight
-        self.mousePos = (self.ms.X.abs/float(self.ms.width), self.ms.Y.abs/float(self.ms.height))
-        mouseRay = self.engine.gfxMgr.camera.getCameraToViewportRay(*self.mousePos)
-        result  =  mouseRay.intersects(self.engine.gfxMgr.groundPlane)
-
-        if result.first:
-            pos =  mouseRay.getPoint(result.second)
-            self.mousePosWorld = pos
-
-            closest = None
-            closestDistance = self.selectionRadius * self.selectionRadius
-            for ent in self.engine.entityMgr.ents.values():
-                distSquared =  ent.pos.squaredDistance(pos)
-                if distSquared < closestDistance:
-                    closest = ent
-                    closestDistance = distSquared
-
-            for ent in selection:
-                if closest:
-                    if self.leftCtrlDown:
-                        if self.leftShiftDown:
-                            ent.aspects[2].addCommand( Intercept(ent,closest) )
-                        else:
-                            ent.aspects[2].setCommand( Intercept(ent,closest) )
-                    else:
-                        if self.leftShiftDown:
-                            ent.aspects[2].addCommand( Follow(ent,closest) )
-                        else:
-                            ent.aspects[2].setCommand( Follow(ent,closest) )
-                else:
-                    if self.leftShiftDown:
-                            ent.aspects[2].addCommand( Move(ent,self.mousePosWorld) )
-                    else:
-                        ent.aspects[2].setCommand( Move(ent,self.mousePosWorld) )
+        pass
                 
     def mouseReleased(self, evt, id):
         return True
     
-    # JoystickListener
+    # JoystickListener ------------------------------------------------------ #
     def buttonPressed(self, evt, button):
         return True
     def buttonReleased(self, evt, button):
@@ -234,4 +204,11 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
     def axisMoved(self, evt, axis):
         return True
 
-#---------------------------------------------------------------------------------------------------
+    def windowResized (self, rw):
+        temp = 0
+        width, height, depth, left, top= rw.getMetrics(temp,temp,temp, temp, temp)  # Note the wrapped function as default needs unsigned int's
+        ms = self.mouse.getMouseState()
+        ms.width = width
+        ms.height = height
+         
+# ----------------------------------------------------------------------------------------------- #
