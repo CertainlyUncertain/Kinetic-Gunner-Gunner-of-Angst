@@ -88,7 +88,7 @@ class GfxMgr:
         self.debugYawNode = self.sceneManager.getRootSceneNode().createChildSceneNode('CamNodeD',(0, 4000, 0))
         self.debugPitchNode = self.debugYawNode.createChildSceneNode('PitchNodeD')
         
-        self.camYawNode = self.engine.entityMgr.ents[0].aspects[2].rollNode.createChildSceneNode('CamNode1',(-6, 30, -5))
+        self.camYawNode = self.engine.entityMgr.player.renderer.rollNode.createChildSceneNode('CamNode1',(-6, 30, -5))
         self.camPitchNode = self.camYawNode.createChildSceneNode('PitchNode1')
         self.camPitchNode.attachObject(self.camera)
  

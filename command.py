@@ -23,6 +23,55 @@ class Move( Command ):
         
     def tick(self, dt):
         return True
+        
+class Crash( Command ):
+    def __init__(self, ent):
+        Command.__init__(self, ent)
+        self.ent.desiredPitch = -45
+        self.ent.desiredSpeed = self.ent.speed
+        self.ent.desiredYaw = self.ent.yaw
+        self.ent.desiredRoll = self.ent.roll
+        self.timer = 5.0
+        
+    def tick(self, dt):
+        ## Check for Ground
+            ## Raytrace forward
+            ## Check Distance to closest
+            ## If Ent and not terrain
+                ## Kill it as well
+                ## Die
+            ## If Ground
+                ## Die
+                
+        # raySceneQuery = self.engine.gfxMgr.sceneManager.createRayQuery(ogre.Ray( self.ent.pos, self.ent.vel ))
+        # raySceneQuery.setSortByDistance( True )
+
+        # result = raySceneQuery.execute()
+        # if len(result) > 0:
+            # if result[0].first < 50:
+                # if item.movable:
+                    # print item.movable.getName()
+                # elif item.worldFragment:
+                    # print item.worldFragment
+                # #self.ent.die()
+        # self.engine.gfxMgr.sceneManager.destroyQuery(raySceneQuery)
+        
+        ## vs Height
+            ## if < ground
+                ## Die
+                ## Return True
+            ## else:
+                ## Return False
+                
+        ## vs Timer
+        self.timer -= dt
+            ## Update Timer
+            ## Check for Done
+        if self.timer < 0:
+            ## Return True/False
+            return True
+            ## Die
+        return False
 
 class Follow( Command ):
     def __init__(self, ent, targ, offset = Vector3(0,0,0)):
