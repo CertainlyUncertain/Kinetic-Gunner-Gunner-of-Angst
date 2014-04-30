@@ -13,7 +13,6 @@ class UnitAI:
 
     def addCommand(self, newCommand):
         self.commands.append( newCommand )
-        print "Command Count: " + str(len(self.commands))
 
     def clearCommands(self):
         self.commands = []

@@ -16,14 +16,6 @@ class Pathing:
         # Pitch
         self.paths['pitch'] = pitch
         self.indices['pitch'] = 0
-
-    def init(self):
-        if len(self.paths['yaw']) > 0:      # Yaw
-            self.ent.desiredYaw = self.ent.yaw + self.paths['yaw'][self.indices['yaw']].total
-        if len(self.paths['pitch']) > 0:    # Pitch
-            self.ent.desiredPitch = self.ent.pitch + self.paths['pitch'][self.indices['pitch']].total
-        if len(self.paths['speed']) > 0:    # Speed
-            self.ent.desiredSpeed = self.ent.speed + self.paths['speed'][self.indices['speed']].total
     
     def tick(self, dt):
         # Yaw ---------------------------------------------

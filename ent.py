@@ -1,6 +1,3 @@
-# Entity class to hold information about entities for 38Engine
-# Sushil Louis
-
 from vector        import Vector3
 from physics       import Physics
 from render        import Renderer
@@ -44,6 +41,9 @@ class Entity:
         self.desiredSpeed = 0
         self.desiredHeading = self.heading
         
+    def die(self):
+        pass
+        
     def __str__(self):
         x = "---\nEntity: %s \nPos: %s, Vel: %s,  mesh = %s\nSpeed: %f, Heading: %f, desiredSpeed: %f, desiredHeading: %f" % (self.uiname, str(self.pos), str(self.vel), self.mesh, self.speed, self.yaw, self.desiredSpeed, self.desiredYaw)
         return x
@@ -57,6 +57,7 @@ class PlayerJet(Entity):
         self.aspectTypes = [ Pathing, Physics, Renderer ]
         self.mesh = 'razor.mesh'
         self.uiname = 'PlayerJet' + str(id)
+        self.health = 100
         # Speed ------------------------
         self.acceleration = 100
         self.maxSpeed = speed
@@ -74,7 +75,17 @@ class PlayerJet(Entity):
         self.desiredRoll = orientation
         self.roll = orientation
         self.rollRate  = 90
-
+        
+    @property
+    def pathing(self):
+        return self.aspects[0]
+    @property
+    def physics(self):
+        return self.aspects[1]
+    @property
+    def renderer(self):
+        return self.aspects[2]
+            
 #---------------------------------------------------------------------------------------------------
 
 class EnemyJet(Entity):
@@ -84,6 +95,7 @@ class EnemyJet(Entity):
         self.aspectTypes = [ UnitAI, Physics, Renderer ]
         self.mesh = 'RZR-002.mesh'
         self.uiname = 'EnemyJet' + str(id)
+        self.health = 50
         # Speed ------------------------
         self.acceleration = 100
         self.maxSpeed = speed
@@ -102,7 +114,51 @@ class EnemyJet(Entity):
         self.roll = orientation
         self.rollRate  = 90
         
-    def follow( self, target, offset ):
-        self.aspects[0].addCommand( Follow( self, target, offset ) )
+    @property
+    def unitai(self):
+        return self.aspects[0]
+    @property
+    def physics(self):
+        return self.aspects[1]
+    @property
+    def renderer(self):
+        return self.aspects[2]
+        
+#---------------------------------------------------------------------------------------------------
+
+class Missile(Entity):
+    def __init__(self, engine, id, source):
+        Entity.__init__(self, engine, id, pos = source.pos )
+        # General
+        self.aspectTypes = [ UnitAI, Physics, Renderer ]
+        self.mesh = 'missile.mesh'
+        self.uiname = 'Missile' + str(id)
+        # Speed ------------------------
+        self.acceleration = 100
+        self.maxSpeed = 750
+        self.speed = source.speed
+        self.desiredSpeed = self.maxSpeed
+        # Yaw --------------------------
+        self.desiredYaw = source.yaw
+        self.yaw = source.yaw
+        self.yawRate  = 30
+        # Pitch ------------------------
+        self.desiredPitch = source.pitch
+        self.pitch = source.pitch
+        self.pitchRate  = 30
+        # Roll -------------------------
+        self.desiredRoll = source.roll
+        self.roll = source.roll
+        self.rollRate  = 90
+        
+    @property
+    def unitai(self):
+        return self.aspects[0]
+    @property
+    def physics(self):
+        return self.aspects[1]
+    @property
+    def renderer(self):
+        return self.aspects[2]
         
 #---------------------------------------------------------------------------------------------------

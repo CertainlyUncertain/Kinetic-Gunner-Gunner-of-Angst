@@ -1,7 +1,3 @@
-# Simple ORIENTED Physics for 38Engine
-# vel is rate of change of pos
-# Sushil Louis
-
 from vector import Vector3
 
 import utils
