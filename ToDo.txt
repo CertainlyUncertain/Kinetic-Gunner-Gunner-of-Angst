@@ -1,0 +1,43 @@
+==========
+TO BE DONE
+==========
+*Due: 5/5*
+
+----------
+   Sound
+----------
+    PlayMusic( "bg.ogg" ) [Unique/Switchable]
+    PlaySound( "file.ogg" ) [Simultaneous]
+    Hit/Fire sounds
+
+----------
+    UI
+----------
+    Align using screen size (gfxMgr.viewPort.actualWidth, gfxMgr.viewPort.actualHeight)
+    Crosshairs (Preferably One Square with Transparency)
+    Score ( Text, able to be updated )
+    Angst Meter ( Bar, filled acording to input value/max )
+    Splash Screen
+    
+----------
+ Graphics
+----------
+    Player Plane and Turret Models
+    Enemy Plane Models (Several)
+    Terrain Textures
+    Terrain (Entities/Terrain/However)
+
+----------
+  Effects
+----------
+    Damage/Death Effects (Smoke/Fire/Explosion/etc)
+    Firing Effect (Laser/Flash/etc)
+
+----------
+ Gameplay
+----------
+    Enemy Spawning, Health, & Death
+    Missile Spawning & Death
+    3D Intercept
+    Additional Levels
+    Level Completion / Transition

@@ -18,6 +18,8 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
         self.rotate = 25
         self.toggle = 0.1
         self.selectionRadius = 100
+        self.MB_Left_Down = False
+        self.MB_Right_Down = False
 
     def init(self):
         windowHandle = 0
@@ -72,6 +74,9 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
         self.mouse.capture()
         self.handleCamera(dtime)
         self.handleModifiers(dtime)
+        # Quit
+        if self.keyboard.isKeyDown(OIS.KC_ESCAPE):
+            self.engine.stop()
         pass
         
     # Keyboard Listener ----------------------------------------------------- #
@@ -83,9 +88,6 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
         # Pause
         if self.keyboard.isKeyDown(OIS.KC_SPACE):
             time.sleep(10)
-        # Quit
-        if self.keyboard.isKeyDown(OIS.KC_ESCAPE):
-            self.engine.stop()
         return True
 
     def keyReleased(self, evt):
@@ -144,77 +146,26 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
         return True
 
     def mousePressed(self, evt, id):
-        self.mouse.capture()
-        self.ms = self.mouse.getMouseState()
+        #self.mouse.capture()
+        #self.ms = self.mouse.getMouseState()
 
-        self.ms.width = self.engine.gfxMgr.viewPort.actualWidth 
-        self.ms.height = self.engine.gfxMgr.viewPort.actualHeight
-        self.mousePos = (self.ms.X.abs/float(self.ms.width), self.ms.Y.abs/float(self.ms.height))
+        #self.ms.width = self.engine.gfxMgr.viewPort.actualWidth 
+        #self.ms.height = self.engine.gfxMgr.viewPort.actualHeight
+        #self.mousePos = (self.ms.X.abs/float(self.ms.width), self.ms.Y.abs/float(self.ms.height))
         
         if id == OIS.MB_Left:
-            self.handleLeftClick(evt)
+            self.MB_Left_Down = True
 
-        #elif id == OIS.MB_Right:
-            #self.handleRightClick(evt)
+        elif id == OIS.MB_Right:
+            self.MB_Right_Down = True
         return True
-
-    def handleLeftClick(self, evt):
-        # self.mouse.capture()
-        # self.ms = self.mouse.getMouseState()
-
-        # self.ms.width = self.engine.gfxMgr.viewPort.actualWidth 
-        # self.ms.height = self.engine.gfxMgr.viewPort.actualHeight
-        # self.mousePos = (self.ms.X.abs/float(self.ms.width), self.ms.Y.abs/float(self.ms.height))
-        
-        mouseRay = self.engine.gfxMgr.camera.getCameraToViewportRay(0.5, 0.5)
-        # Loop Enemies
-        targ = None
-        for eid, ent in self.engine.entityMgr.enemies.iteritems():
-            result  =  mouseRay.intersects(ent.renderer.oEnt.getWorldBoundingBox())
-            if result.first:
-                if not targ:
-                    targ = ent
-                    min = result.second
-                else:
-                    if result.second < min:
-                        targ = ent
-                        min = result.second
-        if targ:
-            print "Direct Hit! on " + targ.uiname
-            targ.unitai.setCommand( command.Crash(targ) )
-            targ.unitai.addCommand( command.Follow(targ, self.engine.entityMgr.player, Vector3(10,20,30)) )
-
-        # Alternate
-        targetRay = self.engine.gfxMgr.camera.getCameraToViewportRay(0.5, 0.5)
-        raySceneQuery = self.engine.gfxMgr.sceneManager.createRayQuery(ogre.Ray())
-        raySceneQuery.setSortByDistance( True )
-        raySceneQuery.setRay(targetRay)
-
-        result = raySceneQuery.execute()
-        if len(result) > 0:
-            for item in result:
-                if item.movable:
-                    print item.movable.getName()
-        self.engine.gfxMgr.sceneManager.destroyQuery(raySceneQuery)
-
-    def handleRightClick(self, evt):
-      # self.mouse.capture()
-        # self.ms = self.mouse.getMouseState()
-
-        # self.ms.width = self.engine.gfxMgr.viewPort.actualWidth 
-        # self.ms.height = self.engine.gfxMgr.viewPort.actualHeight
-        # self.mousePos = (self.ms.X.abs/float(self.ms.width), self.ms.Y.abs/float(self.ms.height))
-        
-        mouseRay = self.engine.gfxMgr.camera.getCameraToViewportRay(0.5, 0.5)
-        # Loop Enemies
-        for eid, ent in self.engine.entityMgr.enemiess.iteritems():
-            result  =  mouseRay.intersects(ent.renderer.oEnt.getWorldBoundingBox())
-            if result.first:
-                print "Direct Hit! on " + ent.uiname
-                result.first.unitai.setCommand( command.Crash(targ) )
-                result.first.unitai.addCommand( command.Follow(targ, self.engine.entityMgr.player, Vector3(10,20,30)) )
                 
     def mouseReleased(self, evt, id):
+        if id == OIS.MB_Left:
+            self.MB_Left_Down = False
+
+        elif id == OIS.MB_Right:
+            self.MB_Right_Down = False
         return True
     
     # JoystickListener ------------------------------------------------------ #
