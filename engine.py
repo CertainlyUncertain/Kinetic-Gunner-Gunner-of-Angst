@@ -19,6 +19,10 @@ class Engine(object):
         self.gfxMgr = gfxMgr.GfxMgr(self)
         self.gfxMgr.init()
 
+        import sndMgr
+        self.sndMgr = sndMgr.SndMgr(self)
+        self.sndMgr.init()
+
         import netMgr
         self.netMgr = netMgr.NetMgr(self)
         self.netMgr.init()
@@ -42,6 +46,10 @@ class Engine(object):
         import cameraMgr
         self.camMgr = cameraMgr.CamMgr(self)
         self.camMgr.init()
+
+        import overlayMgr
+        self.overlayMgr = overlayMgr.OverlayMgr(self)
+        self.overlayMgr.init()
 
         self.gfxMgr.crosslink()
         self.inputMgr.crosslink()
@@ -74,11 +82,11 @@ class Engine(object):
             self.entityMgr.tick(dtime)
             self.gfxMgr.tick(dtime)
             self.netMgr.tick(dtime)
-            self.inputMgr.tick(dtime)
             self.selectionMgr.tick(dtime)
             self.camMgr.tick(dtime)
             self.controlMgr.tick(dtime)
             self.gameMgr.tick(dtime)
+            self.inputMgr.tick(dtime)
             
             self.runTime += dtime
         

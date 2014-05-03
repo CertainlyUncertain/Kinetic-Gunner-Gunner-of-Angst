@@ -9,8 +9,8 @@ class CamMgr:
         self.yawSpeed = -0.1
         self.camPitch = 0.0
         self.pitchSpeed = -0.1
-        self.pitchMax = 90.0
-        self.pitchMin = 0.0
+        self.pitchMax = 80.0
+        self.pitchMin = -10.0
         self.debugCam = False
         self.toggle = 0.1
         self.toggleMax = 0.1
@@ -19,12 +19,12 @@ class CamMgr:
         self.pitchRot = 0.0
         self.rollRot = 0.0
         print "-- Starting Camera Manager --"
-        pass
 
     def init(self):
         pass        
 
     def crosslink(self):
+        ''' Links Camera Nodes from Graphics Manager '''
         self.camera = self.engine.gfxMgr.camera
         self.camYawNode = self.engine.gfxMgr.camYawNode
         self.camPitchNode = self.engine.gfxMgr.camPitchNode
@@ -32,6 +32,7 @@ class CamMgr:
         self.camPitchNode.pitch(ogre.Degree(self.camPitch).valueRadians())
 
     def tick(self, dt):
+        ''' Update Camera Toggle Timer, Yaw, Pitch, and Roll '''
         if self.toggle > 0.0:
             self.toggle -= dt
         self.camYawNode.translate(self.camYawNode.orientation * self.transVector * dt)
@@ -44,18 +45,20 @@ class CamMgr:
         self.rollRot = 0.0
 
     def Yaw(self, amount):
+        ''' Yaws the Camera Yaw Node clamped by Min and Max '''
         self.camYaw = utils.fixAngle( self.camYaw + self.yawSpeed * amount )
         self.camYawNode.resetOrientation()
         self.camYawNode.yaw(ogre.Degree(self.camYaw).valueRadians())
 
     def Pitch(self, amount):
+        ''' Pitches the Camera Pitch Node clamped by Min and Max '''
         self.camPitch = utils.fixAngle( self.camPitch + self.pitchSpeed * amount )
         self.camPitch = utils.clamp( self.camPitch, self.pitchMin, self.pitchMax )
         self.camPitchNode.resetOrientation()
         self.camPitchNode.pitch(ogre.Degree(self.camPitch).valueRadians())
 
     def Swap(self):
-        ''' Swaps between 1st person and 3rd person (debug) cameras'''
+        ''' Swaps between 1st person and 3rd person (debug) cameras '''
         if self.toggle <= 0.0:
             self.toggle = self.toggleMax
             self.debugCam = not self.debugCam
@@ -71,5 +74,8 @@ class CamMgr:
             self.camPitchNode.attachObject(self.camera)
     
     def stop(self):
+        self.camera = None
+        self.camYawNode = None
+        self.camPitchNode = None
         pass
 

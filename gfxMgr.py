@@ -5,7 +5,9 @@ import ogre.renderer.OGRE as ogre
 class GfxMgr:
     def __init__(self, engine):
         self.engine = engine
-        pass
+        self.freeNodes = []
+        self.usedNodes = []
+        self.totalNodes = 0
 
     def init(self):
         self.createRoot()
@@ -14,7 +16,6 @@ class GfxMgr:
         self.createRenderWindow()
         self.initializeResourceGroups()
         self.setupScene()
-
 
     def tick(self, dtime):
         self.root.renderOneFrame()
@@ -43,7 +44,6 @@ class GfxMgr:
         if not self.root.restoreConfig() and not self.root.showConfigDialog():
             raise Exception("User canceled the config dialog -> Application.setupRenderSystem()")
  
- 
     # Create the render window
     def createRenderWindow(self):
         self.root.initialise(True, "(CS 381 Spring 2014 Final Project)")
@@ -69,7 +69,7 @@ class GfxMgr:
         self.groundPlane = ogre.Plane ((0, 1, 0), 350)
         meshManager = ogre.MeshManager.getSingleton ()
         meshManager.createPlane ('Ground', 'General', self.groundPlane,
-                                     30000, 30000, 20, 20, True, 1, 5, 5, (0, 0, 1))
+                                    30000, 30000, 20, 20, True, 1, 5, 5, (0, 0, 1))
         ent = self.sceneManager.createEntity('GroundEntity', 'Ground')
         self.sceneManager.getRootSceneNode().createChildSceneNode('Water').attachObject(ent)
         ent.setMaterialName ('Ocean2_Cg')
@@ -83,7 +83,6 @@ class GfxMgr:
         #self.viewPort.backgroundColour = fadeColour
         #self.sceneManager.setFog (ogre.FOG_LINEAR, fadeColour, 0.0, 3000, 7500)
 
-
     def crosslink(self):
         self.debugYawNode = self.sceneManager.getRootSceneNode().createChildSceneNode('CamNodeD',(0, 4000, 0))
         self.debugPitchNode = self.debugYawNode.createChildSceneNode('PitchNodeD')
@@ -96,3 +95,21 @@ class GfxMgr:
     def stop(self):
         del self.root
 
+    def getNode(self):
+        if len(self.freeNodes) > 0:
+            node = self.freeNodes.pop()#len(self.freeNodes) )
+            # Show?
+        else:
+            node = self.sceneManager.getRootSceneNode().createChildSceneNode(str(self.totalNodes))
+            self.totalNodes += 1
+        self.usedNodes.append( node )
+        return node
+        
+    def recycleNode(self, node):
+        i = self.usedNodes.find(node)
+        self.usedNodes.pop(i)
+        # hide?
+        self.freeNodes.append(node)
+        return node
+        
+# ---------------------------------------------------------------------------- #
