@@ -17,8 +17,8 @@ class SndMgr:
         self.manager = OgreAL.SoundManager()
         print "Sound Manager Constructed "
 
-        self.sndExplosion = "explosion.wav"
-        self.sndShoot = "shoot.wav"
+        self.explode = "explosion.wav"
+        self.laser = "laser.wav"
         
         
     def init(self):

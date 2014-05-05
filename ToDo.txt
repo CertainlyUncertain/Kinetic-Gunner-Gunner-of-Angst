@@ -1,7 +1,17 @@
 ==========
 TO BE DONE
 ==========
-*Due: 5/5*
+*Due: 5/9*
+
+excel credits
+gamename.tgz
+
+Tentative Meeting Times
+=======================
+Tues 5/6:   7:00pm
+Wed 5/7:    1:00pm
+Thurs 5/8:  7:00pm
+Fri 5/9:    12:00pm
 
 ----------
    Sound
@@ -19,6 +29,9 @@ TO BE DONE
     Score ( Text, able to be updated )
 /    Angst Meter ( Bar, filled acording to input value/max )
 /    Splash Screen
+    Game Over / Level Complete Screen
+    Instructions Screen?
+    Border?
     
 ----------
  Graphics
