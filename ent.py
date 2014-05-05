@@ -122,7 +122,7 @@ class EnemyJet(Entity):
         self.maxHealth = 50
         self.health = 50
         self.points = 25
-        self.fireCooldown = 15
+        self.fireCooldown = 20
         # Speed ------------------------
         self.acceleration = 100
         self.maxSpeed = speed
@@ -153,7 +153,7 @@ class EnemyJet(Entity):
         
     def fire(self):
         self.engine.entityMgr.createMissile(Missile, self)
-        self.fireCooldown = 10
+        self.fireCooldown = 18
         
     def tick(self, dtime):
         Entity.tick(self, dtime)

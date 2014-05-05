@@ -36,9 +36,21 @@ class GameMgr:
                     if result.second < min:
                         targ = ent
                         min = result.second
+
+        for eid, ent in self.engine.entityMgr.missiles.iteritems():
+            result  =  mouseRay.intersects(ent.renderer.oEnt.getWorldBoundingBox())
+            if result.first:
+                if not targ:
+                    targ = ent
+                    min = result.second
+                else:
+                    if result.second < min:
+                        targ = ent
+                        min = result.second
         if targ:
             print "Direct Hit! on " + targ.uiname
             self.score += targ.damage( 25 )
+        self.engine.sndMgr.playSound(self.engine.sndMgr.laser)
         self.weaponCooldown = 0.5
 
     def weapon2(self):
@@ -106,7 +118,7 @@ class GameMgr:
                     Expression( 0, 5 ), Expression( -15, 2 ), Expression( 30, 4 ), Expression( -15, 2 ) ]
         player.pathing.addMultiple( speed, yaw, pitch )
             
-        self.spawns = [ SpawnCycle( [SpawnGroup(ent.EnemyJet, 1)], 5), SpawnCycle( [SpawnGroup(ent.EnemyJet, 1)], 60) ]
+        self.spawns = [ SpawnCycle( [SpawnGroup(ent.EnemyJet, 2)], 15), SpawnCycle( [SpawnGroup(ent.EnemyJet, 3)], 20) ]
 
         # Set UI Elements
 
