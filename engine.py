@@ -86,6 +86,8 @@ class Engine(object):
             self.camMgr.tick(dtime)
             self.controlMgr.tick(dtime)
             self.gameMgr.tick(dtime)
+            self.sndMgr.tick(dtime)
+            self.overlayMgr.tick(dtime)
             self.inputMgr.tick(dtime)
             
             self.runTime += dtime

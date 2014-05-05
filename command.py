@@ -64,8 +64,8 @@ class Crash( Command ):
                 ## Return False
                 
         ## vs Timer
+        ## Update Timer
         self.timer -= dt
-            ## Update Timer
             ## Check for Done
         if self.timer < 0:
             ## Return True/False
@@ -73,7 +73,47 @@ class Crash( Command ):
             ## Die
         return False
 
+class Explode( Command ):
+    def __init__(self, ent):
+        Command.__init__(self, ent)
+        #self.ent.desiredPitch = self.ent.pitch
+        #self.ent.desiredSpeed = self.ent.speed
+        #self.ent.desiredYaw = self.ent.yaw
+        #self.ent.desiredRoll = self.ent.roll
+        #self.ent.desiredSpeed = 0
+        self.timer = 2.0
+        
+    def tick(self, dt):
+        self.timer -= dt
+        if self.timer < 0:
+            self.ent.engine.entityMgr.dead.append(self.ent)
+            return True
+        return False  
+        
 class Follow( Command ):
+    def __init__(self, ent, targ):
+        Command.__init__(self, ent)
+        self.target = targ
+
+    def tick(self, dtime):
+        # Check Planar Distance
+        distance = math.sqrt((self.target.pos.x - self.ent.pos.x)**2 + (self.target.pos.z - self.ent.pos.z)**2)
+        # Set Planar Orientation (Yaw)
+        self.ent.desiredYaw = self.getDesiredHeadingToTargetPosition(self.target.pos)
+        # Check Distance
+        if distance < 100:
+            if math.fabs(utils.diffAngle(self.ent.yaw, self.ent.desiredYaw)) < 90:
+                self.ent.desiredSpeed = self.target.speed
+            else:
+                self.ent.desiredSpeed = self.ent.maxSpeed - math.fabs(self.ent.speed - self.ent.maxSpeed)
+                self.ent.desiredYaw = self.target.yaw
+        else:
+            self.ent.desiredSpeed = self.ent.maxSpeed
+        # Height Difference (Pitch)
+        difference = self.target.pos.y - self.ent.pos.y
+        self.ent.desiredPitch = math.degrees(math.atan2(difference, distance))
+            
+class OffsetFollow( Command ):
     def __init__(self, ent, targ, offset = Vector3(0,0,0)):
         Command.__init__(self, ent)
         self.target = targ
@@ -106,5 +146,71 @@ class Follow( Command ):
         # if math.fabs(difference) > 33:
             # self.ent.desiredPitch = math.degrees(math.atan2(difference, distance))
         # else:
-            # self.ent.desiredPitch = self.target.pitch
+            # self.ent.desiredPitch = self.target.pitch   
+            
+class Intercept( Command ):
+    def __init__(self, ent, targ):
+        Command.__init__(self, ent)
+        self.target = targ
+        self.angle = math.degrees(math.atan2(-offset.z, offset.x))
+        self.height = offset.y
+
+    def tick(self, dtime):
+        # Check Planar Distance
+        distance = math.sqrt((self.target.pos.x - self.ent.pos.x)**2 + (self.target.pos.z - self.ent.pos.z)**2)
+        # Set Planar Orientation (Yaw)
+        self.ent.desiredYaw = self.getDesiredHeadingToTargetPosition(self.target.pos)
+        # Check Distance
+        if distance < 50:
+            # Explode
+            ##self.ent.unitai.addCommand( Explode(self.ent) )
+            if math.fabs(utils.diffAngle(self.ent.yaw, self.ent.desiredYaw)) < 90:
+                self.ent.desiredSpeed = self.target.speed
+            else:
+                self.ent.desiredSpeed = self.ent.maxSpeed - math.fabs(self.ent.speed - self.ent.maxSpeed)
+                self.ent.desiredYaw = self.target.yaw
+        else:
+            # Set Course
+            #self.ent.desiredYaw = self.getDesiredHeadingToTargetPosition(self.target.pos)
+            self.ent.desiredSpeed = self.ent.maxSpeed
+        # Height Difference (Pitch)
+        difference = self.target.pos.y - self.ent.pos.y
+        self.ent.desiredPitch = math.degrees(math.atan2(difference, distance))
+
+    # def __init__(self, ent, targetEnt):
+        # Command.__init__(self, ent, targetEnt)
+        # self.targetEntity = targetEnt
+        # self.entity.desiredHeading = self.getDesiredHeadingToTargetPosition(self.targetEntity.pos, self.entity.pos)
+        # self.entity.desiredSpeed = self.entity.maxSpeed
+        # self.done = False
+        # self.isEntityTarget = True
+        # print "Intercepting: ", str(self.targetEntity)
+
+    # def tick(self, dt):
+        # if not self.done:
+            # if self.entity.pos.squaredDistance(self.targetEntity.pos) < 100:
+                # self.done = True
+                # self.entity.desiredSpeed = 0
+            # else:
+                # self.entity.desiredHeading = self.getDesiredHeadingToTargetPosition(self.targetEntity.pos, self.entity.pos)
+                
+    # def tick(self, dtime):
+        # # Set Speed
+        # self.ent.desiredSpeed = self.ent.maxSpeed
+
+        # # Calculate Intercept Point
+        # distance = math.sqrt((self.target.pos.x - self.ent.pos.x)**2 + (self.target.pos.z - self.ent.pos.z)**2)
+        # speed = self.ent.speed
+        # if( speed < 0.01 ):
+            # time = 0
+        # else:
+            # time = distance / speed
+        # print time
+        # point = self.target.pos + self.target.vel * time
+        
+        # # Set Heading
+        # self.ent.desiredHeading = math.atan2( -( point.z - self.ent.pos.z ),
+                                                  # point.x - self.ent.pos.x )
+        # self.ent.desiredHeading = utils.fixAngle(self.ent.desiredHeading)
+        
 #---------------------------------------------------------------------------------------------------

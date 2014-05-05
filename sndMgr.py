@@ -21,13 +21,13 @@ class SndMgr:
     def init(self):
         print "Initializing Sound manager"
         #self.sndMgr = OgreAL.SoundManager()
-        self.bgm = self.manager.createSound("background", "FireField.ogg") #"bg2.wav")
+        self.bgm = self.manager.createSound("background", "DeathWind.ogg", True) #"bg2.wav"
         self.bgm.setGain(0.1)
         self.bgm.play()
 
     def stop(self):
         self.manager._releaseSource(self.bgm)
-        self.manager.destroySound(self.bgm)
+        self.manager.destroyAllSounds()
         
     def tick(self, dtime):
         pass

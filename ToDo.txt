@@ -6,6 +6,7 @@ TO BE DONE
 ----------
    Sound
 ----------
+    http://www.botl.au.com/api/ogreAL/classes.html
     PlayMusic( "bg.ogg" ) [Unique/Switchable]
     PlaySound( "file.ogg" ) [Simultaneous]
     Hit/Fire sounds

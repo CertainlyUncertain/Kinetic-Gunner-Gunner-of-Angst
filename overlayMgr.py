@@ -49,7 +49,7 @@ class OverlayMgr():
 		self.overlay.show()
 	
 		
-	def tick(self, hp, now,score,combo):
+	def tick(self, dt):
 		pass
 
 

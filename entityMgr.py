@@ -8,15 +8,21 @@ class EntityMgr:
         self.engine = engine
                 
     def init(self):
+        # Player --------
         self.player = None
+        ##self.projectiles = {}
+        ##self.nProjs = 0
+        # Hostiles ------
         self.enemies = {}
         self.nEnems = 0
-        self.projectiles = {}
-        self.nProjs = 0
-        import random
+        self.missiles = {}
+        self.nMissiles = 0
+        # Other ---------
+        self.dead = []
+        import random ##--##
         self.randomizer = random
         self.randomizer.seed(None)
-        import ent
+        import ent ##--##
         self.entTypes = [ent.PlayerJet, ent.EnemyJet]
 
     def createPlayer(self, playerType, pos, yaw, speed):
@@ -35,17 +41,35 @@ class EntityMgr:
             
         ent = enemyType(self.engine, self.nEnems, pos, 0, speed)
         ent.init()
-        ent.unitai.addCommand( command.Follow( ent, self.player, self.createRandomOffset() ) )
+        ent.unitai.addCommand( command.OffsetFollow(ent, self.player, self.createRandomOffset()) )
         self.enemies[self.nEnems] = ent;
         self.nEnems = self.nEnems + 1
         return ent
         
-    def createProjectile(self, projType, source, target):
-        ent = projType(self.engine, self.nProjs, source.pos, source.yaw, source.speed)
+    def createMissile(self, missileType, source, target):
+        ent = missileType(self.engine, self.nMissiles, source)
         ent.init()
-        self.projectiles[self.nProjs] = ent;
-        self.nProjs = self.nProjs + 1
+        ent.unitai.addCommand( command.Follow(ent, self.player) )
+        self.missiles[self.nMissiles] = ent;
+        self.nMissiles = self.nMissiles + 1
         return ent
+        
+    def Cleanup(self):
+        for ent in self.dead:
+            # Get ID
+            rID = ent.eid
+            # Remove from List
+            if rID in self.enemies:
+                self.enemies.pop(rID)
+            elif rID in self.missiles:
+                self.missiles.pop(rID)
+            # Delete Ent and ogre ent
+            node = ent.delete()
+            # Recycle Node
+            self.engine.gfxMgr.recycleNode(node)
+            print 'Enemy Count: ' + str(len(self.enemies))
+        # Clear List
+        self.dead = []
         
     def createRandomOffset(self):
         x = self.randomizer.randint(125, 175)
@@ -60,5 +84,9 @@ class EntityMgr:
         self.player.tick(dt)
         for eid, ent in self.enemies.iteritems():
             ent.tick(dt)
-        for eid, ent in self.projectiles.iteritems():
+        for eid, ent in self.missiles.iteritems():
             ent.tick(dt)
+        # Cleanup
+        self.Cleanup()
+        
+# ------------------------------------------------------------------------------------------------ #
