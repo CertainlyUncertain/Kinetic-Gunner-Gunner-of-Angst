@@ -7,10 +7,10 @@ class UnitAI:
         self.commands = []
         
     def tick(self, dtime):
-        if self.commands <> []:
+        if self.commands != []:
             if self.commands[0].tick(dtime):
                 self.commands.pop(0)
-
+                    
     def addCommand(self, newCommand):
         self.commands.append( newCommand )
 

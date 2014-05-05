@@ -87,7 +87,7 @@ class GfxMgr:
         self.debugYawNode = self.sceneManager.getRootSceneNode().createChildSceneNode('CamNodeD',(0, 4000, 0))
         self.debugPitchNode = self.debugYawNode.createChildSceneNode('PitchNodeD')
         
-        self.camYawNode = self.engine.entityMgr.player.renderer.rollNode.createChildSceneNode('CamNode1',(-6, 30, -5))
+        self.camYawNode = self.engine.entityMgr.player.renderer.oNode.createChildSceneNode('CamNode1',(-6, 30, -5))
         self.camPitchNode = self.camYawNode.createChildSceneNode('PitchNode1')
         self.camPitchNode.attachObject(self.camera)
  
@@ -106,7 +106,7 @@ class GfxMgr:
         return node
         
     def recycleNode(self, node):
-        i = self.usedNodes.find(node)
+        i = self.usedNodes.index(node)
         self.usedNodes.pop(i)
         # hide?
         self.freeNodes.append(node)

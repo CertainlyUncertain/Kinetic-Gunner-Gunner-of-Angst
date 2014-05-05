@@ -38,8 +38,7 @@ class GameMgr:
                         min = result.second
         if targ:
             print "Direct Hit! on " + targ.uiname
-            targ.unitai.setCommand( command.Crash(targ) )
-            targ.unitai.addCommand( command.Follow(targ, self.engine.entityMgr.player, self.createRandomOffset()) )
+            targ.damage( 25 )
         self.weaponCooldown = 0.5
 
     def weapon2(self):
@@ -98,14 +97,14 @@ class GameMgr:
     def level1(self):
         # Create Terrain
         # Create Player
-        player = self.engine.entityMgr.createPlayer(ent.PlayerJet, Vector3(1000,1000,1000), 0, 750)
+        player = self.engine.entityMgr.createPlayer(ent.PlayerJet, Vector3(1000,900,1000), 0, 750)
         # Add Commands
         speed = []
         yaw = [ Expression( 0, 3 ), Expression( 270, 5 ), Expression( 0, 3 ), Expression( -270, 5 ) ]
         pitch = [ Expression( 0, 5 ), Expression( 30, 3 ), Expression( -60, 6 ), Expression( 30, 3 ) ]
         player.pathing.addMultiple( speed, yaw, pitch )
             
-        self.spawns.append( SpawnCycle( [SpawnGroup(ent.EnemyJet, 1)], 15) )
+        self.spawns.append( SpawnCycle( [SpawnGroup(ent.EnemyJet, 1)], 30) )
 
         # Set UI Elements
 
