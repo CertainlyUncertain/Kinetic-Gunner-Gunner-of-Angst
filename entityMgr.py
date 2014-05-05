@@ -42,32 +42,33 @@ class EntityMgr:
         ent = enemyType(self.engine, self.nEnems, pos, 0, speed)
         ent.init()
         ent.unitai.addCommand( command.OffsetFollow(ent, self.player, self.createRandomOffset()) )
-        self.enemies[self.nEnems] = ent;
+        self.enemies[ent.uiname] = ent;
         self.nEnems = self.nEnems + 1
         return ent
         
-    def createMissile(self, missileType, source, target):
+    def createMissile(self, missileType, source):
         ent = missileType(self.engine, self.nMissiles, source)
         ent.init()
-        ent.unitai.addCommand( command.Follow(ent, self.player) )
-        self.missiles[self.nMissiles] = ent;
+        ent.unitai.addCommand( command.Ram(ent, self.player) )
+        self.missiles[ent.uiname] = ent;
         self.nMissiles = self.nMissiles + 1
         return ent
         
     def Cleanup(self):
         for ent in self.dead:
             # Get ID
-            rID = ent.eid
+            index = ent.uiname
             # Remove from List
-            if rID in self.enemies:
-                self.enemies.pop(rID)
-            elif rID in self.missiles:
-                self.missiles.pop(rID)
+            if index in self.enemies:
+                self.enemies.pop(index)
+            elif index in self.missiles:
+                self.missiles.pop(index)
             # Delete Ent and ogre ent
             node = ent.delete()
             # Recycle Node
             self.engine.gfxMgr.recycleNode(node)
             print 'Enemy Count: ' + str(len(self.enemies))
+            print 'Missile Count: ' + str(len(self.missiles))
         # Clear List
         self.dead = []
         

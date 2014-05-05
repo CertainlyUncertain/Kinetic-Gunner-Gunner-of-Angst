@@ -38,7 +38,7 @@ class GameMgr:
                         min = result.second
         if targ:
             print "Direct Hit! on " + targ.uiname
-            targ.damage( 25 )
+            self.score += targ.damage( 25 )
         self.weaponCooldown = 0.5
 
     def weapon2(self):
@@ -100,16 +100,18 @@ class GameMgr:
         player = self.engine.entityMgr.createPlayer(ent.PlayerJet, Vector3(1000,900,1000), 0, 750)
         # Add Commands
         speed = []
-        yaw = [ Expression( 0, 3 ), Expression( 270, 5 ), Expression( 0, 3 ), Expression( -270, 5 ) ]
-        pitch = [ Expression( 0, 5 ), Expression( 30, 3 ), Expression( -60, 6 ), Expression( 30, 3 ) ]
+        yaw = [ Expression( 0, 5 ), Expression( -90, 3 ), Expression( 0, 3 ), Expression( -180, 5 ), Expression( -270, 6 ), Expression( 0, 2 ),
+                Expression( -90, 3 ), Expression( 0, 2 ), Expression( 90, 3 ), Expression( 270, 5 ), Expression( 0, 2 ), Expression( -90, 3 ) ]
+        pitch = [ Expression( 0, 5 ), Expression( 30, 3 ), Expression( -60, 6 ), Expression( 30, 3 ),
+                    Expression( 0, 5 ), Expression( -15, 2 ), Expression( 30, 4 ), Expression( -15, 2 ) ]
         player.pathing.addMultiple( speed, yaw, pitch )
             
-        self.spawns.append( SpawnCycle( [SpawnGroup(ent.EnemyJet, 1)], 30) )
+        self.spawns = [ SpawnCycle( [SpawnGroup(ent.EnemyJet, 1)], 5), SpawnCycle( [SpawnGroup(ent.EnemyJet, 1)], 60) ]
 
         # Set UI Elements
 
     def createRandomOffset(self):
-        x = self.randomizer.randint(125, 175)
+        x = self.randomizer.randint(-125, -175)
         y = self.randomizer.randint(50,100)
         i = self.randomizer.randint(1,2)
         z = self.randomizer.randint(125, 175) * (-1)**i
