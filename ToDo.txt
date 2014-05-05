@@ -14,11 +14,11 @@ TO BE DONE
 ----------
     UI
 ----------
-    Align using screen size (gfxMgr.viewPort.actualWidth, gfxMgr.viewPort.actualHeight)
-    Crosshairs (Preferably One Square with Transparency)
+/    Align using screen size (gfxMgr.viewPort.actualWidth, gfxMgr.viewPort.actualHeight)
+/    Crosshairs (Preferably One Square with Transparency)
     Score ( Text, able to be updated )
-    Angst Meter ( Bar, filled acording to input value/max )
-    Splash Screen
+/    Angst Meter ( Bar, filled acording to input value/max )
+/    Splash Screen
     
 ----------
  Graphics
@@ -37,8 +37,8 @@ TO BE DONE
 ----------
  Gameplay
 ----------
-    Enemy Spawning, Health, & Death
-    Missile Spawning & Death
+/    Enemy Spawning, Health, & Death
+/    Missile Spawning & Death
     3D Intercept
     Additional Levels
     Level Completion / Transition

@@ -37,6 +37,8 @@ class Entity:
     def tick(self, dtime):
         for aspect in self.aspects:
             aspect.tick(dtime)
+        #print "Delta: yaw:%f, pitch:%f, roll:%f\n" % (self.deltaYaw, self.deltaPitch, self.deltaRoll)
+        
         
     def delete(self):
         node = self.renderer.delete()
@@ -45,6 +47,7 @@ class Entity:
         
     def damage(self, amount):
         self.health -= amount
+        print self.uiname + " Health: " + str(self.health) + '/' + str(self.maxHealth)
         if self.health <= -(self.maxHealth/2):
             self.unitai.setCommand( command.Explode(self) )
             return self.points
@@ -52,6 +55,7 @@ class Entity:
             self.unitai.setCommand( command.Crash(self) )
             self.unitai.addCommand( command.Explode(self) )
             return self.points
+        return 0
         
     def __str__(self):
         x = "---\nEntity: %s \nPos: %s, Vel: %s,  mesh = %s\nSpeed: %f, Heading: %f" % (self.uiname, str(self.pos), str(self.vel), self.mesh, self.speed, self.yaw)
@@ -61,7 +65,7 @@ class Entity:
 
 class PlayerJet(Entity):
     def __init__(self, engine, id, pos = Vector3(0,0,0), orientation = 0, speed = 500):
-        Entity.__init__(self, engine, id, pos = pos )
+        Entity.__init__(self, engine, id, pos = pos, vel = Vector3(0, 0, 0))
         # General ----------------------
         self.aspectTypes = [ Pathing, Physics, Renderer ]
         self.mesh = 'razor.mesh'
@@ -97,12 +101,19 @@ class PlayerJet(Entity):
     @property
     def renderer(self):
         return self.aspects[2]
+
+    def damage(self, amount):
+        self.health -= amount
+        print self.uiname + " Health: " + str(self.health) + '/' + str(self.maxHealth)
+        if self.health <= 0:
+            print "You Dead."
+            # Gameover
             
 #---------------------------------------------------------------------------------------------------
 
 class EnemyJet(Entity):
     def __init__(self, engine, id, pos = Vector3(0,0,0), orientation = 0, speed = 525):
-        Entity.__init__(self, engine, id, pos = pos )
+        Entity.__init__(self, engine, id, pos = pos, vel = Vector3(0, 0, 0) )
         # General ----------------------
         self.aspectTypes = [ UnitAI, Physics, Renderer ] #Combat
         self.mesh = 'RZR-002.mesh'
@@ -111,7 +122,7 @@ class EnemyJet(Entity):
         self.maxHealth = 50
         self.health = 50
         self.points = 25
-        self.fireCooldown = 20
+        self.fireCooldown = 15
         # Speed ------------------------
         self.acceleration = 100
         self.maxSpeed = speed
@@ -141,7 +152,7 @@ class EnemyJet(Entity):
         return self.aspects[2]
         
     def fire(self):
-        self.engine.entityMgr.createMissile(Missile, self, self.engine.entityMgr.player)
+        self.engine.entityMgr.createMissile(Missile, self)
         self.fireCooldown = 10
         
     def tick(self, dtime):
@@ -155,7 +166,7 @@ class EnemyJet(Entity):
 
 class Missile(Entity):
     def __init__(self, engine, id, source):
-        Entity.__init__(self, engine, id, pos = source.pos )
+        Entity.__init__(self, engine, id, pos = source.pos, vel = Vector3(0, 0, 0) )
         # General ----------------------
         self.aspectTypes = [ UnitAI, Physics, Renderer ]
         self.mesh = 'missile.mesh'
@@ -166,18 +177,18 @@ class Missile(Entity):
         self.points = 5
         self.duration = 10
         # Speed ------------------------
-        self.acceleration = 10
-        self.maxSpeed = 750
+        self.acceleration = 50
+        self.maxSpeed = 1000
         self.speed = source.speed
         self.desiredSpeed = self.maxSpeed
         # Yaw --------------------------
         self.desiredYaw = source.yaw
         self.yaw = source.yaw
-        self.yawRate  = 30
+        self.yawRate  = 100
         # Pitch ------------------------
         self.desiredPitch = source.pitch
         self.pitch = source.pitch
-        self.pitchRate  = 30
+        self.pitchRate  = 100
         # Roll -------------------------
         self.desiredRoll = source.roll
         self.roll = source.roll
@@ -198,6 +209,7 @@ class Missile(Entity):
         if self.duration < 0:
             self.unitai.setCommand( command.Crash(self) )
             self.unitai.addCommand( command.Explode(self) )
+            self.duration = 10
         else:
             self.duration -= dtime
             

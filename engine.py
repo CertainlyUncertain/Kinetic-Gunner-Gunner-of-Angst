@@ -1,9 +1,7 @@
 # 381 main engine
 
 class Engine(object):
-    '''
-    The root of the global manager tree
-    '''
+    ''' The root of the global manager tree '''
 
     def __init__(self):
         pass
@@ -70,6 +68,12 @@ class Engine(object):
         weu = ogre.WindowEventUtilities() # Needed for linux/mac
         weu.messagePump()                 # Needed for linux/mac
 
+	# splash screen
+        self.gfxMgr.root.renderOneFrame()
+	time.sleep( 3 )
+	self.overlayMgr.destroy(self.overlayMgr.splashScreen)
+
+	# run the game
         self.oldTime = time.time()        
         self.runTime = 0
         while (self.keepRunning):

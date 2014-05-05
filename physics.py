@@ -11,11 +11,11 @@ class Physics:
         #----------position-----------------------------------
         timeScaledAcceleration = self.ent.acceleration * dtime
         self.ent.speed += utils.clamp( self.ent.desiredSpeed - self.ent.speed, -timeScaledAcceleration, timeScaledAcceleration)
-        y = self.ent.speed * math.sin( math.radians( self.ent.pitch ) )
+        self.ent.vel.y = self.ent.speed * math.sin( math.radians( self.ent.pitch ) )
         #xz = self.ent.speed * math.cos( math.radians( self.ent.pitch ) )
-        x = self.ent.speed * math.cos( math.radians( self.ent.yaw ) )
-        z = self.ent.speed * -math.sin( math.radians( self.ent.yaw ) )
-        self.ent.pos = self.ent.pos + ( Vector3(x,y,z) * dtime )
+        self.ent.vel.x = self.ent.speed * math.cos( math.radians( self.ent.yaw ) )
+        self.ent.vel.z = self.ent.speed * -math.sin( math.radians( self.ent.yaw ) )
+        self.ent.pos = self.ent.pos + ( self.ent.vel * dtime )
 
         # Yaw -----------------------------------
         timeScaledYaw = self.ent.yawRate * dtime
