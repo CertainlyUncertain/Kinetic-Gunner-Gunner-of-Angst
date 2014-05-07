@@ -1,4 +1,4 @@
-# 381 main engine
+# Gunner of Angst Main Engine ------------------------------------------------ #
 
 class Engine(object):
     ''' The root of the global manager tree '''
@@ -49,9 +49,10 @@ class Engine(object):
         self.overlayMgr = overlayMgr.OverlayMgr(self)
         self.overlayMgr.init()
 
-        self.gfxMgr.crosslink()
+        self.gameMgr.crosslink()
+        #self.gfxMgr.crosslink()
         self.inputMgr.crosslink()
-        self.camMgr.crosslink()
+        #self.camMgr.crosslink()
 
     def stop(self):
         self.gfxMgr.stop()
@@ -60,7 +61,6 @@ class Engine(object):
         self.selectionMgr.stop()
         self.gameMgr.stop()
         self.controlMgr.stop()
-        self.keepRunning = False
 
     def run(self):
         import time
@@ -68,12 +68,12 @@ class Engine(object):
         weu = ogre.WindowEventUtilities() # Needed for linux/mac
         weu.messagePump()                 # Needed for linux/mac
 
-	# splash screen
+	    # splash screen
         self.gfxMgr.root.renderOneFrame()
-	time.sleep( 3 )
-	self.overlayMgr.destroy(self.overlayMgr.splashScreen)
+        time.sleep( 3 )
+        self.overlayMgr.destroy(self.overlayMgr.splashScreen)
 
-	# run the game
+        # run the game
         self.oldTime = time.time()        
         self.runTime = 0
         while (self.keepRunning):
@@ -99,5 +99,7 @@ class Engine(object):
             weu.messagePump()             # Needed for linux/mac
             time.sleep(0.001)
 
+        self.stop()
         print "381 Engine exiting..."
+        
     

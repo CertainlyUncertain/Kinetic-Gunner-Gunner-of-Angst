@@ -76,7 +76,7 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
         self.handleModifiers(dtime)
         # Quit
         if self.keyboard.isKeyDown(OIS.KC_ESCAPE):
-            self.engine.stop()
+            self.engine.keepRunning = False
         pass
         
     # Keyboard Listener ----------------------------------------------------- #

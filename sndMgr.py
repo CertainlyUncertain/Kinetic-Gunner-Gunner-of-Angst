@@ -1,11 +1,8 @@
-# Simple Keyboard arrows based manual Control Aspect for 38Engine
-# Sushil Louis
+# Sound Manager -------------------------------------------------------------- #
 
-#from vector import Vector3
-import utils
 import math
 import ogre.renderer.OGRE as ogre
-import ogre.io.OIS as OIS
+#import ogre.io.OIS as OIS
 import ogre.sound.OgreAL as OgreAL
 
 
@@ -13,26 +10,30 @@ class SndMgr:
 
     def __init__(self, engine):
         self.engine = engine
-        #self.engine.gfxMgr.root.loadPlugin("OgreOggSound")
         self.manager = OgreAL.SoundManager()
-        print "Sound Manager Constructed "
-
+        self.soundCount = 0
+        self.bgm = None
         self.explode = "explosion.wav"
         self.laser = "laser.wav"
-        
+        print "Sound Manager Constructed "
         
     def init(self):
         print "Initializing Sound manager"
-        #self.sndMgr = OgreAL.SoundManager()
-        self.bgm = self.manager.createSound("background", "bg2.wav", True) #"bg2.wav"
-        self.bgm.setGain(0.1)
-        self.bgm.play()
+        pass
 
     def playSound(self, snd):
-        sound = self.manager.createSound("background", snd)
-        sound.setGain(0.1)
+        sound = self.manager.createSound("Snd" + str(self.soundCount), snd)
+        self.soundCount += 1
+        sound.setGain(0.25)
         sound.play()
 
+    def playMusic(self, msc):
+        if self.bgm:
+            self.manager.destroySound( self.bgm )
+        self.bgm = self.manager.createSound("bgm", msc, True)
+        self.bgm.setGain(0.1)
+        self.bgm.play()
+        
     def stop(self):
         self.manager._releaseSource(self.bgm)
         self.manager.destroyAllSounds()
@@ -40,5 +41,4 @@ class SndMgr:
     def tick(self, dtime):
         pass
 
-    def loadLevel(self, dtime):
-        pass
+# Sound Manager -------------------------------------------------------------- #

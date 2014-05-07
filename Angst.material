@@ -1,0 +1,85 @@
+material Angst/Crosshair
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+
+			texture_unit
+			{
+				texture crosshairs.png
+
+			}
+		}
+	}
+}
+
+material Angst/SplashScreen
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture splash.jpg
+			}
+		}
+	}
+}
+material Angst/Bar
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture angst.png
+			}
+		}
+	}
+}
+
+material Angst/BarBG
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture borg.jpg
+			}
+		}
+	}
+}
+
+material Angst/Victory
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture borg.jpg
+			}
+		}
+	}
+}
+
+material Angst/Defeat
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture borg.jpg
+			}
+		}
+	}
+}
