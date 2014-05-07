@@ -53,7 +53,7 @@ class EntityMgr:
         ent.unitai.addCommand( command.Ram(ent, self.player) )
         self.missiles[ent.uiname] = ent;
         self.nMissiles = self.nMissiles + 1
-        ent.renderer.oEnt.setMaterialName ('Examples/CelShading')
+        ent.renderer.oEnt.setMaterialName ('Color_000')
         return ent
         
     def Cleanup(self):

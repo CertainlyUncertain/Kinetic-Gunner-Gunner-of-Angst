@@ -3,13 +3,11 @@ TO BE DONE
 ==========
 *Due: 5/9*
 
-excel credits
-gamename.tgz
+*excel credits*
+*gamename.tgz*
 
 Tentative Meeting Times
 =======================
-Tues 5/6:   7:00pm
-Wed 5/7:    1:00pm
 Thurs 5/8:  7:00pm
 Fri 5/9:    12:00pm
 
@@ -18,6 +16,7 @@ http://sourceforge.net/projects/nxtank/files/ (Python Ogre program that unzips t
    Sound
 ----------
     http://www.botl.au.com/api/ogreAL/classes.html
+    http://www.ogre3d.org/tikiwiki/tiki-index.php?page=OpenAl+Soundmanager&structure=Cookbook
     PlayMusic( "bg.ogg" ) [Unique/Switchable]
     PlaySound( "file.ogg" ) [Simultaneous]
     Hit/Fire sounds
@@ -25,6 +24,8 @@ http://sourceforge.net/projects/nxtank/files/ (Python Ogre program that unzips t
 ----------
     UI
 ----------
+    http://www.ogre3d.org/tikiwiki/tiki-index.php?page=Projecting+3D+position+and+size+to+2D&structure=Cookbook  (Projecting 3D to 2D)
+    http://www.ogre3d.org/tikiwiki/Manual+Resource+Loading#Font (Some Font Stuff)
 /    Align using screen size (gfxMgr.viewPort.actualWidth, gfxMgr.viewPort.actualHeight)
 /    Crosshairs (Preferably One Square with Transparency)
     Score ( Text, able to be updated )
@@ -39,20 +40,63 @@ http://sourceforge.net/projects/nxtank/files/ (Python Ogre program that unzips t
 ----------
     http://www.ogre3d.org/tikiwiki/Materials
     http://www.ogre3d.org/docs/manual/manual_14.html
+    http://wiki.python-ogre.org/index.php?title=Intermediate_Tutorial_5 (Static Geometry)
+    http://www.ogre3d.org/tikiwiki/tiki-index.php?page=Intermediate+Tutorial+5&structure=Tutorials (Static Geometry)
+    http://www.ogre3d.org/tikiwiki/tiki-index.php?page=Ogre+Terrain+System (Terrain, but only works for Ogre 1.7+)
+    
     Player Plane and Turret Models
     Enemy Plane Models (Several)
     Terrain Textures
     Terrain (Entities/Terrain/However)
 
+
 ----------
   Effects
 ----------
+    http://www.ogre3d.org/tikiwiki/tiki-index.php?page=Create+outline+around+a+character&structure=Cookbook  (Entity Highlighting)
+    http://www.ogre3d.org/tikiwiki/tiki-index.php?page=ParticleExampleSun&structure=Cookbook  (Particle Sun)
+    http://www.ogre3d.org/tikiwiki/tiki-index.php?page=Explosion&structure=Cookbook (Explosion)
+
     Damage/Death Effects (Smoke/Fire/Explosion/etc)
     Firing Effect (Laser/Flash/etc)
 
+    http://www.cse.unr.edu/~sushil/class/381/notes/wake.py (Wakes -> Smoke)
+    http://www.cse.unr.edu/~sushil/class/381/notes/wakeSlides.ppt (basic info)
+    http://www.ogre3d.org/docs/manual/manual_34.html (Particle Scripts)
+    http://www.ogre3d.org/docs/manual/manual_36.html (Particle Emitters)
+    http://www.ogre3d.org/docs/manual/manual_40.html (Particle Affectors)
+    http://www.ogre3d.org/docs/api/1.9/classOgre_1_1ParticleSystem.html  (Laser? Stuff)
+    particle_system Space/Laser
+    {
+        material        Examples/Flare
+        particle_width  3
+        particle_height 3
+        cull_each       false
+        quota           1000000
+        billboard_type  point
+        local_space true
+
+        // Area emitter
+        emitter Point
+        {
+           angle           0
+           emission_rate   500
+           time_to_live_min 1000
+           time_to_live_max 1000
+           direction       0 0 -1
+           velocity       1000
+           colour 1.0 0.27 0.0
+        }
+    }
+    
+    http://www.ogre3d.org/docs/api/1.9/classOgre_1_1BillboardChain.html
+    BillboardChain bbchain;
+    bbchain.addChainElement(BillboardChain::Element(Vector3(0,0,0), 10, 0, ColourValue(1, 0, 0)));
+    
 ----------
  Gameplay
 ----------
+    http://www.ogre3d.org/tikiwiki/tiki-index.php?page=Oriented+Bounding+Box&structure=Cookbook (Oriented Bounding Box)
 /    Enemy Spawning, Health, & Death
 /    Missile Spawning & Death
     3D Intercept
