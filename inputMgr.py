@@ -84,7 +84,7 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
         '''Handles Toggleable Key Presses'''
         # Swap Cameras (Between First-Person and Debug Views)
         if self.keyboard.isKeyDown(OIS.KC_G):
-            self.engine.camMgr.Swap()
+            self.engine.camMgr.swap()
         # Pause
         if self.keyboard.isKeyDown(OIS.KC_SPACE):
             time.sleep(10)
@@ -141,8 +141,8 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
     # MouseListener --------------------------------------------------------- #
     def mouseMoved(self, evt):
         currMouse = self.mouse.getMouseState()
-        self.engine.camMgr.Yaw(currMouse.X.rel)
-        self.engine.camMgr.Pitch(currMouse.Y.rel)
+        self.engine.camMgr.yawRot += currMouse.X.rel
+        self.engine.camMgr.pitchRot += currMouse.Y.rel
         return True
 
     def mousePressed(self, evt, id):
