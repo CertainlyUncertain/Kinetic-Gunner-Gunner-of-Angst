@@ -166,7 +166,7 @@ class Missile(Entity):
         Entity.__init__(self, engine, id, pos = source.pos, vel = Vector3(0, 0, 0) )
         # General ----------------------
         self.aspectTypes = [ UnitAI, Physics, Renderer ]
-        self.mesh = 'missile.mesh' #missile3.mesh / missile.mesh
+        self.mesh = 'mis.mesh' #missile3.mesh / missile.mesh
         self.uiname = 'Missile' + str(id)
         # Combat -----------------------
         self.maxHealth = 10
