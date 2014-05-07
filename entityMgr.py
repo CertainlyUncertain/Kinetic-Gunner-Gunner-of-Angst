@@ -44,6 +44,7 @@ class EntityMgr:
         ent.unitai.addCommand( command.OffsetFollow(ent, self.player, self.createRandomOffset()) )
         self.enemies[ent.uiname] = ent;
         self.nEnems = self.nEnems + 1
+        ent.renderer.oEnt.setMaterialName ('Examples/CelShading')
         return ent
         
     def createMissile(self, missileType, source):
@@ -52,6 +53,7 @@ class EntityMgr:
         ent.unitai.addCommand( command.Ram(ent, self.player) )
         self.missiles[ent.uiname] = ent;
         self.nMissiles = self.nMissiles + 1
+        ent.renderer.oEnt.setMaterialName ('Examples/CelShading')
         return ent
         
     def Cleanup(self):
@@ -72,8 +74,21 @@ class EntityMgr:
         # Clear List
         self.dead = []
         
+    def clear(self):
+        # Player --------
+        self.player.health = self.player.maxHealth
+        ##self.projectiles = {}
+        ##self.nProjs = 0
+        # Hostiles ------
+        self.enemies = {}
+        self.nEnems = 0
+        self.missiles = {}
+        self.nMissiles = 0
+        # Other ---------
+        self.dead = [] 
+
     def createRandomOffset(self):
-        x = self.randomizer.randint(125, 175)
+        x = self.randomizer.randint(-175, -125)
         y = self.randomizer.randint(50,100)
         i = self.randomizer.randint(1,2)
         z = self.randomizer.randint(125, 175) * (-1)**i

@@ -15,7 +15,7 @@ class GfxMgr:
         self.setupRenderSystem()
         self.createRenderWindow()
         self.initializeResourceGroups()
-        self.setupScene()
+        self.createScene()
 
     def tick(self, dtime):
         self.root.renderOneFrame()
@@ -55,14 +55,27 @@ class GfxMgr:
  
     # Now, create a scene here. Three things that MUST BE done are sceneManager, camera and
     # viewport initializations
-    def setupScene(self):
+    def createScene(self):
         self.sceneManager = self.root.createSceneManager(ogre.ST_EXTERIOR_CLOSE, "Default SceneManager")
 
         self.camera = self.sceneManager.createCamera("Camera")
         self.camera.nearClipDistance = 5
 
         self.viewPort = self.root.getAutoCreatedWindow().addViewport(self.camera)
-        self.sceneManager.ambientLight = 0.9, 0.8, 0.6
+
+    def setupCamera(self):
+        self.debugYawNode = self.sceneManager.getRootSceneNode().createChildSceneNode('CamNodeD',(0, 4000, 0))
+        self.debugPitchNode = self.debugYawNode.createChildSceneNode('PitchNodeD')
+        
+        self.camYawNode = self.engine.entityMgr.player.renderer.oNode.createChildSceneNode('CamNode1',(-6, 30, -5))
+        self.camPitchNode = self.camYawNode.createChildSceneNode('PitchNode1')
+
+        self.camPitchNode.attachObject(self.camera)
+        self.engine.camMgr.crosslink()
+
+    def setupScene1(self):
+        # Everything after this can be level specific and is deleted by clearScene() #
+        self.sceneManager.ambientLight = 0.8, 0.8, 0.6
  
         # Setup a ground plane.
         self.sceneManager.setWorldGeometry("terrain.cfg")
@@ -82,19 +95,44 @@ class GfxMgr:
         #fadeColour = (0.1, 0.1, 0.1)
         #self.viewPort.backgroundColour = fadeColour
         #self.sceneManager.setFog (ogre.FOG_LINEAR, fadeColour, 0.0, 3000, 7500)
+        self.setupCamera()
+
+    def setupScene2(self):
+        # Everything after this can be level specific ##############################################
+        self.sceneManager.ambientLight = 0.9, 0.7, 0.9
+ 
+        # Setup a ground plane.
+        self.sceneManager.setWorldGeometry("terrain.cfg")
+        self.groundPlane = ogre.Plane ((0, 1, 0), 350)
+        meshManager = ogre.MeshManager.getSingleton ()
+        meshManager.createPlane ('Ground', 'General', self.groundPlane,
+                                    30000, 30000, 20, 20, True, 1, 5, 5, (0, 0, 1))
+        water = self.sceneManager.createEntity('GroundEntity', 'Ground')
+        self.sceneManager.getRootSceneNode().createChildSceneNode('Water').attachObject(water)
+        water.setMaterialName ('OceanCg')
+        water.castShadows = False
+        # Sky Box/Plane --------------------------------------------------------
+        self.sceneManager.setSkyDome (True, "Examples/EveningSkyBox", 5, 8)
+        #plane = ogre.Plane ((0, -1, 0), -10)
+        #self.sceneManager.setSkyPlane (True, plane, "Examples/SpaceSkyPlane", 100, 45, True, 0.5, 150, 150)
+        # Fog ------------------------------------------------------------------
+        #fadeColour = (0.1, 0.1, 0.1)
+        #self.viewPort.backgroundColour = fadeColour
+        #self.sceneManager.setFog (ogre.FOG_LINEAR, fadeColour, 0.0, 3000, 7500)
+        self.setupCamera()
+
+    def clearScene(self):
+        self.camera.parentSceneNode.detachObject(self.camera)
+        self.sceneManager.clearScene()
 
     def crosslink(self):
-        self.debugYawNode = self.sceneManager.getRootSceneNode().createChildSceneNode('CamNodeD',(0, 4000, 0))
-        self.debugPitchNode = self.debugYawNode.createChildSceneNode('PitchNodeD')
-        
-        self.camYawNode = self.engine.entityMgr.player.renderer.oNode.createChildSceneNode('CamNode1',(-6, 30, -5))
-        self.camPitchNode = self.camYawNode.createChildSceneNode('PitchNode1')
-        self.camPitchNode.attachObject(self.camera)
+        self.setupCamera()
  
     # In the end, clean everything up (delete)
     def stop(self):
         del self.root
 
+    # Creating and Recycling of Scene Nodes
     def getNode(self):
         if len(self.freeNodes) > 0:
             node = self.freeNodes.pop()#len(self.freeNodes) )

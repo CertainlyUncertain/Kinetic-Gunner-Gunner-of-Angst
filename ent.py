@@ -105,9 +105,6 @@ class PlayerJet(Entity):
     def damage(self, amount):
         self.health -= amount
         print self.uiname + " Health: " + str(self.health) + '/' + str(self.maxHealth)
-        if self.health <= 0:
-            print "You Dead."
-            # Gameover
             
 #---------------------------------------------------------------------------------------------------
 
@@ -116,7 +113,7 @@ class EnemyJet(Entity):
         Entity.__init__(self, engine, id, pos = pos, vel = Vector3(0, 0, 0) )
         # General ----------------------
         self.aspectTypes = [ UnitAI, Physics, Renderer ] #Combat
-        self.mesh = 'RZR-002.mesh'
+        self.mesh = 'jet.mesh' #RZR-002.mesh
         self.uiname = 'EnemyJet' + str(id)
         # Combat -----------------------
         self.maxHealth = 50
@@ -169,7 +166,7 @@ class Missile(Entity):
         Entity.__init__(self, engine, id, pos = source.pos, vel = Vector3(0, 0, 0) )
         # General ----------------------
         self.aspectTypes = [ UnitAI, Physics, Renderer ]
-        self.mesh = 'missile.mesh'
+        self.mesh = 'missile3.mesh' #missile.mesh
         self.uiname = 'Missile' + str(id)
         # Combat -----------------------
         self.maxHealth = 10
