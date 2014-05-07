@@ -1,6 +1,7 @@
 # Sound Manager -------------------------------------------------------------- #
 
 import math
+from vector import Vector3
 import ogre.renderer.OGRE as ogre
 #import ogre.io.OIS as OIS
 import ogre.sound.OgreAL as OgreAL
@@ -21,9 +22,11 @@ class SndMgr:
         print "Initializing Sound manager"
         pass
 
-    def playSound(self, snd):
+    def playSound(self, snd, pos = None):
         sound = self.manager.createSound("Snd" + str(self.soundCount), snd)
         self.soundCount += 1
+        if pos:
+            sound.setPosition( pos )
         sound.setGain(0.25)
         sound.play()
 

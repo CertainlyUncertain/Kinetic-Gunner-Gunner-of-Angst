@@ -76,7 +76,7 @@ class EntityMgr:
         
     def clear(self):
         # Player --------
-        self.player.health = self.player.maxHealth
+        self.player = None
         ##self.projectiles = {}
         ##self.nProjs = 0
         # Hostiles ------
@@ -85,7 +85,7 @@ class EntityMgr:
         self.missiles = {}
         self.nMissiles = 0
         # Other ---------
-        self.dead = [] 
+        self.dead = []
 
     def createRandomOffset(self):
         x = self.randomizer.randint(-175, -125)
@@ -97,7 +97,8 @@ class EntityMgr:
     def tick(self, dt):
         # for eid, ent in self.ents.iteritems():
             # ent.tick(dt)
-        self.player.tick(dt)
+        if self.player:
+            self.player.tick(dt)
         for eid, ent in self.enemies.iteritems():
             ent.tick(dt)
         for eid, ent in self.missiles.iteritems():

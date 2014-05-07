@@ -29,14 +29,6 @@ class Engine(object):
         self.inputMgr = inputMgr.InputMgr(self)
         self.inputMgr.init()
 
-        import selectionMgr
-        self.selectionMgr = selectionMgr.SelectionMgr(self)
-        self.selectionMgr.init()
-
-        import controlMgr
-        self.controlMgr = controlMgr.ControlMgr(self)
-        self.controlMgr.init()
-
         import gameMgr
         self.gameMgr = gameMgr.GameMgr(self)
         self.gameMgr.init()
@@ -55,12 +47,10 @@ class Engine(object):
         #self.camMgr.crosslink()
 
     def stop(self):
-        self.gfxMgr.stop()
         self.camMgr.stop()
-        self.inputMgr.stop()
-        self.selectionMgr.stop()
         self.gameMgr.stop()
-        self.controlMgr.stop()
+        self.inputMgr.stop()
+        self.gfxMgr.stop()
 
     def run(self):
         import time
@@ -68,16 +58,17 @@ class Engine(object):
         weu = ogre.WindowEventUtilities() # Needed for linux/mac
         weu.messagePump()                 # Needed for linux/mac
 
-	    # splash screen
+	    # Show Splash Screen
+        self.overlayMgr.showSplash()
         self.gfxMgr.root.renderOneFrame()
         time.sleep( 3 )
-        self.overlayMgr.destroy(self.overlayMgr.splashScreen)
+        self.overlayMgr.hideSplash()
 
-        # run the game
+        # Run the Game
         self.oldTime = time.time()        
         self.runTime = 0
         while (self.keepRunning):
-            now = time.time() # Change to time.clock() for windows
+            now = time.time() # Change to time.clock() for Direct3D (Windows)
             dtime = now - self.oldTime
             if( dtime > 0.25 ):
                 dtime = 0.25
@@ -86,9 +77,7 @@ class Engine(object):
             self.entityMgr.tick(dtime)
             self.gfxMgr.tick(dtime)
             self.netMgr.tick(dtime)
-            self.selectionMgr.tick(dtime)
             self.camMgr.tick(dtime)
-            self.controlMgr.tick(dtime)
             self.gameMgr.tick(dtime)
             self.sndMgr.tick(dtime)
             self.overlayMgr.tick(dtime)

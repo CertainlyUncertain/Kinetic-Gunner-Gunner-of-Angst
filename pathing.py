@@ -1,11 +1,10 @@
 from expression import Expression
 import math
 
-class Pathing:
-    paths = {}
-    indices = {}
-    
+class Pathing:    
     def __init__(self, ent, speed = [], yaw = [], pitch = []):
+        self.paths = {}
+        self.indices = {}
         self.ent = ent
         # Speed
         self.paths['speed'] = speed
@@ -41,14 +40,11 @@ class Pathing:
             self.ent.desiredSpeed = self.ent.speed + rate
             if self.paths['speed'][self.indices['speed']].complete():
                 self.indices['speed'] = (self.indices['speed'] + 1) % len(self.paths['speed'])
-                
 
-    def addSingle(self, key, adding):
-        self.paths[key].append( adding )
 
-    def addMultiple(self, speed = [], yaw = [], pitch = []):
-        self.paths['speed'].extend( speed )
-        self.paths['yaw'].extend( yaw )
-        self.paths['pitch'].extend( pitch )
+    def setMultiple(self, speed = [], yaw = [], pitch = []):
+        self.paths['speed'] = speed
+        self.paths['yaw'] = yaw
+        self.paths['pitch'] = pitch
             
 #---------------------------------------------------------------------------------------------------

@@ -13,6 +13,7 @@ Wed 5/7:    1:00pm
 Thurs 5/8:  7:00pm
 Fri 5/9:    12:00pm
 
+http://sourceforge.net/projects/nxtank/files/ (Python Ogre program that unzips the files when you run it. Could be useful as reference.)
 ----------
    Sound
 ----------
@@ -36,6 +37,8 @@ Fri 5/9:    12:00pm
 ----------
  Graphics
 ----------
+    http://www.ogre3d.org/tikiwiki/Materials
+    http://www.ogre3d.org/docs/manual/manual_14.html
     Player Plane and Turret Models
     Enemy Plane Models (Several)
     Terrain Textures

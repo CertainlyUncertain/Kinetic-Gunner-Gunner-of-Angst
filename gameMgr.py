@@ -8,6 +8,8 @@ class GameMgr:
     def __init__(self, engine):
         self.engine = engine
         # Game Variables
+        self.playing = False
+        self.mouseWasDown = False
         self.score = 0
         self.levelTimer = 100
         self.levels = []
@@ -57,6 +59,7 @@ class GameMgr:
                         min = result.second
         if targ:
             print "Direct Hit! on " + targ.uiname
+            self.engine.sndMgr.playSound(self.engine.sndMgr.explode) #, targ.pos )
             self.score += targ.damage( 25 )
         self.engine.sndMgr.playSound(self.engine.sndMgr.laser)
         self.weaponHeat += 15
@@ -105,13 +108,16 @@ class GameMgr:
         
     def loadLevel(self):
         self.levels[self.currentLevel-1]()
+        self.playing = True
+        self.engine.overlayMgr.hideSplash()
 
     def levelEnd(self, victory = False ):
-
+        self.playing = False
         # if Victory:
         if victory:
             # Display Victory Score Screen
-            self.engine.overlayMgr.ShowVictorySplash()
+            self.engine.overlayMgr.showVictorySplash()
+            self.engine.sndMgr.playMusic( "bg1.wav" )
             self.currentLevel += 1
             # Check for last level?
             if self.currentLevel > self.maxLevel:
@@ -119,24 +125,23 @@ class GameMgr:
         # else: Defeat
         else:
             # Display Defeat Score Screen
-            self.engine.overlayMgr.ShowDefeatSplash()
+            self.engine.overlayMgr.showDefeatSplash()
+            self.engine.sndMgr.playMusic( "bg1.wav" )
         # Clear Scene & Entity Manager
-        self.engityMgr.clear()
-        self.engine.clearScene()
-        # Wait for input
-        while not self.engine.imputMgr.MB_Left_Down:
-            pass
-        # Do stuff
-        
+        self.engine.camMgr.clear()
+        self.engine.entityMgr.clear()
+        self.engine.gfxMgr.clearScene()
         
     def level1(self):
+        # Create Player
+        player = self.engine.entityMgr.createPlayer(ent.PlayerJet, Vector3(1000,900,1000), 0, 750)
         # Add Commands
         speed = []
         yaw = [ Expression( 0, 5 ), Expression( -90, 3 ), Expression( 0, 3 ), Expression( -180, 5 ), Expression( -270, 6 ), Expression( 0, 2 ),
                 Expression( -90, 3 ), Expression( 0, 2 ), Expression( 90, 3 ), Expression( 270, 5 ), Expression( 0, 2 ), Expression( -90, 3 ) ]
         pitch = [ Expression( 0, 5 ), Expression( 30, 3 ), Expression( -60, 6 ), Expression( 30, 3 ),
                     Expression( 0, 5 ), Expression( -15, 2 ), Expression( 30, 4 ), Expression( -15, 2 ) ]
-        player.pathing.addMultiple( speed, yaw, pitch )
+        player.pathing.setMultiple( speed, yaw, pitch )
             
         self.spawns = [ SpawnCycle( [SpawnGroup(ent.EnemyJet, 2)], 15), SpawnCycle( [SpawnGroup(ent.EnemyJet, 3)], 20) ]
         self.levelTimer = 270
@@ -154,14 +159,14 @@ class GameMgr:
                 Expression( 90, 3 ), Expression( 0, 2 ), Expression( -90, 3 ), Expression( -270, 5 ), Expression( 0, 2 ), Expression( 90, 3 ) ]
         pitch = [ Expression( 0, 5 ), Expression( 25, 4 ), Expression( -50, 8 ), Expression( 25, 4 ),
                     Expression( 0, 5 ), Expression( -15, 3 ), Expression( 30, 6 ), Expression( -15, 3 ) ]
-        player.pathing.addMultiple( speed, yaw, pitch )
+        player.pathing.setMultiple( speed, yaw, pitch )
             
         self.spawns = [ SpawnCycle( [SpawnGroup(ent.EnemyJet, 2)], 15), SpawnCycle( [SpawnGroup(ent.EnemyJet, 3)], 10), SpawnCycle( [SpawnGroup(ent.EnemyJet, 2)], 20) ]
         self.levelTimer = 300
         # Create Terrain
         self.engine.gfxMgr.setupScene2()
         # Set BGM
-        self.engine.sndMgr.playMusic( "bg1.wav" )
+        self.engine.sndMgr.playMusic( "bg2.wav" )
 
     def level3(self):
         pass
@@ -174,30 +179,37 @@ class GameMgr:
         return Vector3(x,y,z)
 
     def tick(self, dt):
-        if self.engine.entityMgr.player.health <= 0:
-            self.levelEnd(False)
+        if self.playing:
+            if self.engine.entityMgr.player.health <= 0:
+                self.levelEnd(False)
+            else:
+                # Check for level complete
+                if self.levelTimer < 0:
+                    self.levelEnd( True )
+                else:
+                    self.levelTimer -= dt
+                    # Overheating
+                    self.weaponHeat -= self.weaponCoolingSpeed * dt
+                    if self.weaponHeat < 0:
+                        self.weaponHeat = 0
+                    # Firing Cooldown
+                    if self.weaponCooldown > 0:
+                        self.weaponCooldown -= dt
+                    else:
+                        if self.engine.inputMgr.MB_Left_Down:
+                            self.primaryWeapon()
+                        elif self.engine.inputMgr.MB_Right_Down:
+                            self.secondaryWeapon()
+                    # Update Enemy Spawn List
+                    if self.spawns[self.spawnIndex].tick(dt):
+                        self.spawns[self.spawnIndex].spawn(self.engine.entityMgr)
+                        self.spawnIndex = (self.spawnIndex + 1) % len(self.spawns)
         else:
-            # Overheating
-            self.weaponHeat -= self.weaponCoolingSpeed * dt
-            if self.weaponHeat < 0:
-                self.weaponHeat = 0
-            # Firing Cooldown
-            if self.weaponCooldown > 0:
-                self.weaponCooldown -= dt
-            else:
-                if self.engine.inputMgr.MB_Left_Down:
-                    self.primaryWeapon()
-                elif self.engine.inputMgr.MB_Right_Down:
-                    self.secondaryWeapon()
-            # Check for level complete?
-            if self.levelTimer < 0:
-                self.levelEnd( True )
-            else:
-                self.levelTimer -= dt
-            # Update Enemy Spawn List
-            if self.spawns[self.spawnIndex].tick(dt):
-                self.spawns[self.spawnIndex].spawn(self.engine.entityMgr)
-                self.spawnIndex = (self.spawnIndex + 1) % len(self.spawns)
+            if self.engine.inputMgr.MB_Left_Down and not self.mousWasDown:
+                # Do stuff
+                self.loadLevel()
+        # Save Previous Mouse State
+        self.mousWasDown = self.engine.inputMgr.MB_Left_Down
 
     def crosslink(self):
         self.loadLevel()

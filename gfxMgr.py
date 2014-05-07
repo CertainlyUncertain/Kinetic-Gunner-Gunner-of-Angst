@@ -123,6 +123,9 @@ class GfxMgr:
 
     def clearScene(self):
         self.camera.parentSceneNode.detachObject(self.camera)
+        self.freeNodes = []
+        self.usedNodes = []
+        self.totalNodes = 0
         self.sceneManager.clearScene()
 
     def crosslink(self):
