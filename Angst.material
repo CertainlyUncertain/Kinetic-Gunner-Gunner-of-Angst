@@ -9,12 +9,40 @@ material Angst/Crosshair
 			texture_unit
 			{
 				texture crosshairs.png
-
 			}
 		}
 	}
 }
+material Angst/ProgressBar
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
 
+			texture_unit
+			{
+				texture progbar.png
+			}
+		}
+	}
+}
+material Angst/ProgressArrow
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+
+			texture_unit
+			{
+				texture arrow.png
+			}
+		}
+	}
+}
 material Angst/SplashScreen
 {
 	technique
@@ -41,7 +69,19 @@ material Angst/Bar
 		}
 	}
 }
-
+material Angst/Bar2
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture angst2.png
+			}
+		}
+	}
+}
 material Angst/BarBG
 {
 	technique
@@ -55,7 +95,6 @@ material Angst/BarBG
 		}
 	}
 }
-
 material Angst/Victory
 {
 	technique
@@ -69,7 +108,6 @@ material Angst/Victory
 		}
 	}
 }
-
 material Angst/Defeat
 {
 	technique
@@ -83,7 +121,6 @@ material Angst/Defeat
 		}
 	}
 }
-
 material Angst/Sky1
 {
 	technique
@@ -119,7 +156,6 @@ material Angst/Nebula2
 		}
 	}
 }
-
 material Angst/Space1
 {
 	technique
@@ -137,7 +173,6 @@ material Angst/Space1
 		}
 	}
 }
-
 material Angst/Stars3
 {
 	technique
@@ -155,7 +190,6 @@ material Angst/Stars3
 		}
 	}
 }
-
 vertex_program Angst/Cg/Ocean2VS cg
 {
 	source Ocean2HLSL_Cg.vert
@@ -169,7 +203,6 @@ vertex_program Angst/Cg/Ocean2VS cg
 		param_named_auto eyePosition camera_position_object_space
 	}
 }
-
 fragment_program Angst/Cg/Ocean2FS cg
 {
 	source Ocean2HLSL_Cg.frag
@@ -177,7 +210,6 @@ fragment_program Angst/Cg/Ocean2FS cg
 	profiles ps_2_0 arbfp1
 
 }
-
 material Angst/Ocean2_Cg
 {
 	technique
@@ -226,3 +258,4 @@ material Angst/Ocean2_Cg
 
 	}
 }
+

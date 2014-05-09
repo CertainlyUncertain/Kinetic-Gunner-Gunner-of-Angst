@@ -5,6 +5,7 @@ from spawning import *
 from expression import Expression
 import ent
 import command
+import time
 
 class GameMgr:
     def __init__(self, engine):
@@ -14,6 +15,7 @@ class GameMgr:
         self.mouseWasDown = False
         self.score = 0
         self.levelTimer = 100
+        self.levelDuration = 100
         self.levels = []
         self.currentLevel = 1
         self.lastLevel = 3
@@ -117,34 +119,42 @@ class GameMgr:
             self.currentWeapon = self.weapon1
         
     def loadLevel(self):
+        print "LoadLevel"
         self.levels[self.currentLevel-1]()
+        print "LevelLoaded"
         self.playing = True
         self.engine.overlayMgr.hideSplash()
 
     def levelEnd(self, victory = False ):
+        print "LevelEnd"
         self.playing = False
         # if Victory:
         if victory:
+            print "Victory"
             # Display Victory Score Screen
             self.engine.overlayMgr.showVictorySplash()
-            self.engine.sndMgr.playMusic( "bg1.wav" )
+            #self.engine.sndMgr.playMusic( "bg1.wav" )
             self.currentLevel += 1
             # Check for last level?
             if self.currentLevel > self.lastLevel:
                 self.currentLevel = 1
         # else: Defeat
         else:
+            print "Defeat"
             # Display Defeat Score Screen
             self.engine.overlayMgr.showDefeatSplash()
             self.engine.sndMgr.playMusic( "bg1.wav" )
         # Clear Scene & Entity Manager
         self.engine.camMgr.clear()
+        print "CamClear"
         self.engine.entityMgr.clear()
+        print "EntClear"
         self.engine.gfxMgr.clearScene()
+        print "SceneClear"
         
     def level1(self):
         # Create Player
-        player = self.engine.entityMgr.createPlayer(ent.PlayerJet, Vector3(1000,900,1000), 0, 750)
+        player = self.engine.entityMgr.createPlayer(ent.PlayerJet, Vector3(12500,900,12500), 0, 750)
         # Add Commands
         speed = []
         yaw = [ Expression( 0, 5 ), Expression( -90, 3 ), Expression( 0, 3 ), Expression( -180, 5 ), Expression( -270, 6 ), Expression( 0, 2 ),
@@ -154,7 +164,8 @@ class GameMgr:
         player.pathing.setMultiple( speed, yaw, pitch )
             
         self.spawns = [ SpawnCycle( [SpawnGroup(ent.EnemyJet, 2)], 15), SpawnCycle( [SpawnGroup(ent.EnemyJet, 3)], 20) ]
-        self.levelTimer = 120
+        self.levelDuration = 120
+        self.levelTimer = self.levelDuration
         # Create Terrain
         self.engine.gfxMgr.setupScene1()
         # Set BGM
@@ -172,7 +183,8 @@ class GameMgr:
         player.pathing.setMultiple( speed, yaw, pitch )
             
         self.spawns = [ SpawnCycle( [SpawnGroup(ent.EnemyJet, 2)], 15), SpawnCycle( [SpawnGroup(ent.EnemyJet, 3)], 10), SpawnCycle( [SpawnGroup(ent.EnemyJet, 2)], 20) ]
-        self.levelTimer = 150
+        self.levelDuration = 150
+        self.levelTimer = self.levelDuration
         # Create Terrain
         self.engine.gfxMgr.setupScene2()
         # Set BGM

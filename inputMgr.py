@@ -14,7 +14,7 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
         OIS.KeyListener.__init__(self)
         OIS.MouseListener.__init__(self)
         OIS.JoyStickListener.__init__(self)
-        self.move = 500
+        self.move = 1000
         self.rotate = 25
         self.selectionRadius = 100
         self.MB_Left_Down = False
@@ -112,10 +112,10 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
         if  self.keyboard.isKeyDown(OIS.KC_D):
             self.engine.camMgr.transVector.x += self.move
         # Up     
-        if self.keyboard.isKeyDown(OIS.KC_PGUP):
+        if self.keyboard.isKeyDown(OIS.KC_3):
             self.engine.camMgr.transVector.y += self.move
         # Down
-        if self.keyboard.isKeyDown(OIS.KC_PGDOWN):
+        if self.keyboard.isKeyDown(OIS.KC_4):
             self.engine.camMgr.transVector.y -= self.move          
         # Yaw
         if self.keyboard.isKeyDown(OIS.KC_Q):

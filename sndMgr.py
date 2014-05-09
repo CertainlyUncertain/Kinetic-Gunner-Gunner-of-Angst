@@ -32,13 +32,15 @@ class SndMgr:
 
     def playMusic(self, msc):
         if self.bgm:
+            self.bgm.pause()
+            #self.manager._releaseSource(self.bgm)
             self.manager.destroySound( self.bgm )
-        self.bgm = self.manager.createSound("bgm", msc, True)
+        self.bgm = self.manager.createSound("bgm", msc) #, True)
         self.bgm.setGain(0.1)
         self.bgm.play()
         
     def stop(self):
-        self.manager._releaseSource(self.bgm)
+        self.bgm.pause()
         self.manager.destroyAllSounds()
         
     def tick(self, dtime):

@@ -1,6 +1,7 @@
 # Graphics manager
 from vector import Vector3
 import ogre.renderer.OGRE as ogre
+#import ogre.renderer.ogreterrain as ogreterrain
 
 # Manages graphics. Creates graphics, scene, scene nodes, renders scene
 class GfxMgr:
@@ -73,16 +74,16 @@ class GfxMgr:
         self.meshManager = ogre.MeshManager.getSingleton ()
 
         self.camera = self.sceneManager.createCamera("Camera")
-        self.camera.nearClipDistance = 5
+        self.camera.nearClipDistance = 1
 
         self.viewPort = self.root.getAutoCreatedWindow().addViewport(self.camera)
         self.particleManager = ogre.ParticleSystemManager.getSingleton()
 
     def setupCamera(self):
-        self.debugYawNode = self.sceneManager.getRootSceneNode().createChildSceneNode('CamNodeD',(0, 4000, 0))
+        self.debugYawNode = self.sceneManager.getRootSceneNode().createChildSceneNode('CamNodeD',(12500, 10000, 12500))
         self.debugPitchNode = self.debugYawNode.createChildSceneNode('PitchNodeD')
         
-        self.camYawNode = self.engine.entityMgr.player.renderer.oNode.createChildSceneNode('CamNode1',(-6, 30, -5))
+        self.camYawNode = self.engine.entityMgr.player.renderer.oNode.createChildSceneNode('CamNode1',(0, 30, 0))
         self.camPitchNode = self.camYawNode.createChildSceneNode('PitchNode1')
         self.camPitchNode.attachObject(self.camera)
         
@@ -90,6 +91,13 @@ class GfxMgr:
         self.laserNode = self.camPitchNode.createChildSceneNode('LaserNode', (0,-6,0))
         self.laserNode.attachObject(self.laser)
         self.laser.setVisible(False)
+
+        self.turret = self.sceneManager.createEntity("LAZER", "laser.mesh")
+        self.turretNode = self.camPitchNode.createChildSceneNode('turretNode', (0,-10,-5))
+        #self.turretNode.setInheritOrientation(False)
+        self.turretNode.yaw(ogre.Degree(90))
+        self.turretNode.roll(ogre.Degree(10))
+        self.turretNode.attachObject(self.turret)
         
         #Currently Debug Trail
         sunParticle = self.sceneManager.createParticleSystem("Sun", "Angst/Sun")
@@ -113,13 +121,14 @@ class GfxMgr:
         # sunNode.attachObject(sunParticle)
  
         # Setup a ground plane
+        worldSize = 25000
+        height = 160
         self.sceneManager.setWorldGeometry("terrain.cfg")
-        self.groundPlane = ogre.Plane ((0, 1, 0), 350)
-        #meshManager = ogre.MeshManager.getSingleton ()
+        self.groundPlane = ogre.Plane ((0, 1, 0), height)
         self.meshManager.createPlane ('Ground', 'General', self.groundPlane,
-                                    35000, 35000, 20, 20, True, 1, 5, 5, (0, 0, 1))
+                                    worldSize, worldSize, 20, 20, True, 1, 5, 5, (0, 0, 1))
         ent = self.sceneManager.createEntity('GroundEntity', 'Ground')
-        self.sceneManager.getRootSceneNode().createChildSceneNode('Water').attachObject(ent)
+        self.sceneManager.getRootSceneNode().createChildSceneNode('Water', (worldSize/2,0,worldSize/2)).attachObject(ent)
         ent.setMaterialName ('Angst/Ocean2_Cg')
         ent.castShadows = False
         # Sky Box/Plane --------------------------------------------------------
@@ -131,10 +140,10 @@ class GfxMgr:
         #self.viewPort.backgroundColour = fadeColour
         #self.sceneManager.setFog (ogre.FOG_LINEAR, fadeColour, 0.0, 3000, 7500)
         
-        #ent = self.sceneManager.createEntity('MountainEnt', 'Mountain.mesh')
-        #node = self.sceneManager.getRootSceneNode().createChildSceneNode('Mountain', (0,325,0))
-        #node.attachObject(ent)
-        #node.setScale(500,1500,1000)
+        ent = self.sceneManager.createEntity('MountainEnt', 'Mountain.mesh')
+        node = self.sceneManager.getRootSceneNode().createChildSceneNode('Mountain', (0,325,0))
+        node.attachObject(ent)
+        node.setScale(500,1500,1000)
         
         self.setupCamera()
 

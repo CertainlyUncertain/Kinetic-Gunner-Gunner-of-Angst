@@ -21,6 +21,7 @@ class Entity:
         self.uiname = "Robot" + str(id)
         self.mesh = mesh
         self.aspects = []
+        self.flag = "Healthy"
         # Combat
         self.health = 1
         self.points = 0
@@ -52,13 +53,16 @@ class Entity:
         print self.uiname + " Health: " + str(self.health) + '/' + str(self.maxHealth)
         if self.health <= -(self.maxHealth/2):
             self.unitai.setCommand( command.Explode(self) )
+            self.flag = "Dead"
             return self.points
         elif self.health <= 0:
+            self.flag = "Crashing"
             self.engine.sndMgr.playSound(self.engine.sndMgr.explode) #, self.pos )
             self.unitai.setCommand( command.Crash(self) )
             #self.unitai.addCommand( command.Explode(self) )
             return self.points
         else:
+            self.flag = "Damaged"
             self.engine.sndMgr.playSound(self.engine.sndMgr.explode) #, self.pos )
             return 0
         
@@ -73,7 +77,7 @@ class PlayerJet(Entity):
         Entity.__init__(self, engine, id, pos = pos, vel = Vector3(0, 0, 0))
         # General ----------------------
         self.aspectTypes = [ Pathing, Physics, Renderer ]
-        self.mesh = 'razor.mesh'
+        self.mesh = 'player.mesh'
         self.uiname = 'PlayerJet' + str(id)
         # Combat -----------------------
         self.maxHealth = 100
@@ -119,7 +123,7 @@ class EnemyJet(Entity):
         Entity.__init__(self, engine, id, pos = pos, vel = Vector3(0, 0, 0) )
         # General ----------------------
         self.aspectTypes = [ UnitAI, Physics, Renderer ] #Combat
-        self.mesh = 'RZR-002.mesh' #jet.mesh / RZR-002.mesh
+        self.mesh = 'enemy.mesh' #jet.mesh / RZR-002.mesh
         self.uiname = 'EnemyJet' + str(id)
         # Combat -----------------------
         self.maxHealth = 50
@@ -177,7 +181,7 @@ class Missile(Entity):
         Entity.__init__(self, engine, id, pos = source.pos, vel = Vector3(0, 0, 0) )
         # General ----------------------
         self.aspectTypes = [ UnitAI, Physics, Renderer ]
-        self.mesh = 'mis.mesh' #missile3.mesh / missile.mesh
+        self.mesh = 'missile4.mesh' #missile3.mesh / missile.mesh
         self.uiname = 'Missile' + str(id)
         # Combat -----------------------
         self.maxHealth = 10
