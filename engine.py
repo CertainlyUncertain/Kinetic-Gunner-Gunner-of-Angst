@@ -73,14 +73,21 @@ class Engine(object):
             if( dtime > 0.25 ):
                 dtime = 0.25
             self.oldTime = now
-
+            print "entTick"
             self.entityMgr.tick(dtime)
+            print "gfxTick"
             self.gfxMgr.tick(dtime)
+            print "netTick"
             self.netMgr.tick(dtime)
+            print "camTick"
             self.camMgr.tick(dtime)
+            print "gameTick"
             self.gameMgr.tick(dtime)
+            print "sndTick"
             self.sndMgr.tick(dtime)
+            print "ovrTick"
             self.overlayMgr.tick(dtime)
+            print "inputTick"
             self.inputMgr.tick(dtime)
             
             self.runTime += dtime
