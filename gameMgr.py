@@ -5,7 +5,6 @@ from spawning import *
 from expression import Expression
 import ent
 import command
-import time
 
 class GameMgr:
     def __init__(self, engine):
@@ -76,12 +75,12 @@ class GameMgr:
             result  =  mouseRay.intersects(ent.renderer.oEnt.getWorldBoundingBox())
             if result.first:
                 print "Direct Hit! on " + ent.uiname
-                self.score += targ.damage( 25 )
+                self.score += ent.damage( 25 )
         for eid, ent in self.engine.entityMgr.missiles.iteritems():
             result  =  mouseRay.intersects(ent.renderer.oEnt.getWorldBoundingBox())
             if result.first:
                 print "Direct Hit! on " + ent.uiname
-                self.score += targ.damage( 25 )
+                self.score += ent.damage( 25 )
         self.weaponHeat += 35
         self.weaponCooldown = 1.0
         self.engine.gfxMgr.laserTimer = self.engine.gfxMgr.laserDuration
@@ -119,18 +118,14 @@ class GameMgr:
             self.currentWeapon = self.weapon1
         
     def loadLevel(self):
-        print "LoadLevel"
         self.levels[self.currentLevel-1]()
-        print "LevelLoaded"
         self.playing = True
         self.engine.overlayMgr.hideSplash()
 
     def levelEnd(self, victory = False ):
-        print "LevelEnd"
         self.playing = False
         # if Victory:
         if victory:
-            print "Victory"
             # Display Victory Score Screen
             self.engine.overlayMgr.showVictorySplash()
             #self.engine.sndMgr.playMusic( "bg1.wav" )
@@ -140,17 +135,13 @@ class GameMgr:
                 self.currentLevel = 1
         # else: Defeat
         else:
-            print "Defeat"
             # Display Defeat Score Screen
             self.engine.overlayMgr.showDefeatSplash()
             self.engine.sndMgr.playMusic( "bg1.wav" )
         # Clear Scene & Entity Manager
         self.engine.camMgr.clear()
-        print "CamClear"
         self.engine.entityMgr.clear()
-        print "EntClear"
         self.engine.gfxMgr.clearScene()
-        print "SceneClear"
         
     def level1(self):
         # Create Player

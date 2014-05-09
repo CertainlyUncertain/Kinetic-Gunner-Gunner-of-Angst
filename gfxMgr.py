@@ -109,10 +109,10 @@ class GfxMgr:
         
     def setupScene1(self):
         # Everything after this can be level specific and is deleted by clearScene() #
-        self.sceneManager.ambientLight = 0.1, 0.1, 0.1
+        self.sceneManager.ambientLight = 0.1, 0.1, 0.05
         self.light = self.sceneManager.createLight ('Sun')
         self.light.type = ogre.Light.LT_DIRECTIONAL
-        self.light.direction = (0, -1, 1)
+        self.light.direction = Vector3(0, -1, 1).normalisedCopy()
         self.light.diffuseColour = (0.8, 0.8, 0.6)
         self.light.specularColour = (0.8, 0.8, 0.6)
  
@@ -140,19 +140,19 @@ class GfxMgr:
         #self.viewPort.backgroundColour = fadeColour
         #self.sceneManager.setFog (ogre.FOG_LINEAR, fadeColour, 0.0, 3000, 7500)
         
-        ent = self.sceneManager.createEntity('MountainEnt', 'Mountain.mesh')
-        node = self.sceneManager.getRootSceneNode().createChildSceneNode('Mountain', (0,325,0))
-        node.attachObject(ent)
-        node.setScale(500,1500,1000)
+        #ent = self.sceneManager.createEntity('MountainEnt', 'Mountain.mesh')
+        #node = self.sceneManager.getRootSceneNode().createChildSceneNode('Mountain', (0,325,0))
+        #node.attachObject(ent)
+        #node.setScale(500,1500,1000)
         
         self.setupCamera()
 
     def setupScene2(self):
         # Everything after this can be level specific ##############################################
-        self.sceneManager.ambientLight = 0.05, 0.05, 0.05
+        self.sceneManager.ambientLight = 0.05, 0.05, 0.75
         self.light = self.sceneManager.createLight ('Moon')
         self.light.type = ogre.Light.LT_DIRECTIONAL
-        self.light.direction = (1, -1, 1)
+        self.light.direction = Vector3(1, -1, 1).normalisedCopy()
         self.light.diffuseColour = (0.4, 0.4, 0.6)
         self.light.specularColour = (0.4, 0.4, 0.6)
  

@@ -5,6 +5,7 @@ from physics       import Physics
 from render        import Renderer
 from unitAI        import UnitAI
 from pathing       import Pathing
+from particles     import Particles
 import command
 import utils
 
@@ -44,6 +45,7 @@ class Entity:
         #print "Delta: yaw:%f, pitch:%f, roll:%f\n" % (self.deltaYaw, self.deltaPitch, self.deltaRoll)
         
     def delete(self):
+        self.particles.delete()
         node = self.renderer.delete()
         self.aspects = []
         return node
@@ -76,9 +78,10 @@ class PlayerJet(Entity):
     def __init__(self, engine, id, pos = Vector3(0,0,0), orientation = 0, speed = 500):
         Entity.__init__(self, engine, id, pos = pos, vel = Vector3(0, 0, 0))
         # General ----------------------
-        self.aspectTypes = [ Pathing, Physics, Renderer ]
+        self.aspectTypes = [ Pathing, Physics, Renderer, Particles ]
         self.mesh = 'player.mesh'
         self.uiname = 'PlayerJet' + str(id)
+        self.flag = "Player"
         # Combat -----------------------
         self.maxHealth = 100
         self.health = 100
@@ -110,7 +113,10 @@ class PlayerJet(Entity):
     @property
     def renderer(self):
         return self.aspects[2]
-
+    @property
+    def particles(self):
+        return self.aspects[3]
+        
     def damage(self, amount):
         self.health -= amount
         self.engine.sndMgr.playSound(self.engine.sndMgr.explode) #, self.pos )
@@ -122,9 +128,10 @@ class EnemyJet(Entity):
     def __init__(self, engine, id, pos = Vector3(0,0,0), orientation = 0, speed = 525):
         Entity.__init__(self, engine, id, pos = pos, vel = Vector3(0, 0, 0) )
         # General ----------------------
-        self.aspectTypes = [ UnitAI, Physics, Renderer ] #Combat
+        self.aspectTypes = [ UnitAI, Physics, Renderer, Particles ] #Combat
         self.mesh = 'enemy.mesh' #jet.mesh / RZR-002.mesh
         self.uiname = 'EnemyJet' + str(id)
+        self.flag = "Enemy"
         # Combat -----------------------
         self.maxHealth = 50
         self.health = 50
@@ -160,6 +167,9 @@ class EnemyJet(Entity):
     @property
     def renderer(self):
         return self.aspects[2]
+    @property
+    def particles(self):
+        return self.aspects[3]
         
     def fire(self):
         self.engine.entityMgr.createMissile(Missile, self)
@@ -180,9 +190,10 @@ class Missile(Entity):
     def __init__(self, engine, id, source):
         Entity.__init__(self, engine, id, pos = source.pos, vel = Vector3(0, 0, 0) )
         # General ----------------------
-        self.aspectTypes = [ UnitAI, Physics, Renderer ]
+        self.aspectTypes = [ UnitAI, Physics, Renderer, Particles ]
         self.mesh = 'missile4.mesh' #missile3.mesh / missile.mesh
         self.uiname = 'Missile' + str(id)
+        self.flag = "Missile"
         # Combat -----------------------
         self.maxHealth = 10
         self.health = 10
@@ -217,6 +228,9 @@ class Missile(Entity):
     @property
     def renderer(self):
         return self.aspects[2]
+    @property
+    def particles(self):
+        return self.aspects[3]
             
     def tick(self, dtime):
         Entity.tick(self, dtime)

@@ -30,7 +30,7 @@ class EntityMgr:
     def createPlayer(self, playerType, pos, yaw, speed):
         self.player = playerType(self.engine, 0, pos, yaw, speed)
         self.player.init()
-        self.player.renderer.oEnt.setMaterialName ('Examples/CelShading')
+        self.player.renderer.oEnt.setMaterialName ('Angst/Player')
         return self.player
     
     def createEnemy(self, enemyType, pos = None, speed = None):
@@ -47,7 +47,7 @@ class EntityMgr:
         ent.unitai.addCommand( command.OffsetFollow(ent, self.player, self.createRandomOffset()) )
         self.enemies[ent.uiname] = ent;
         self.nEnems = self.nEnems + 1
-        #ent.renderer.oEnt.setMaterialName ('Examples/CelShading')
+        ent.renderer.oEnt.setMaterialName ('Angst/Enemy')
         return ent
         
     def createMissile(self, missileType, source):
@@ -56,7 +56,7 @@ class EntityMgr:
         ent.unitai.addCommand( command.Ram(ent, self.player) )
         self.missiles[ent.uiname] = ent;
         self.nMissiles = self.nMissiles + 1
-        ent.renderer.oEnt.setMaterialName ('Color_000')
+        ent.renderer.oEnt.setMaterialName ('Angst/Missile')
         return ent
         
     def Cleanup(self):

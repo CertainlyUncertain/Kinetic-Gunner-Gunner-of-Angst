@@ -1,0 +1,93 @@
+material 1399613460_1_0023_FireBrick
+{
+	technique
+	{
+		pass
+		{
+			texture red.jpg		
+		}
+	}
+}
+material 1399613460_2_0022_Maroon
+{
+	technique
+	{
+		pass
+		{
+			//ambient     1       1       1       1
+			//diffuse     0.80    0.00    0.00    1.0
+			//specular    1       1       1       3.2000
+            texture orange.jpg
+		}
+	}
+}
+material 1399613460_3_0135_DarkGray
+{
+	technique
+	{
+		pass
+		{
+			//ambient     1       1       1       1
+			//diffuse     0.80    0.00    0.00    1.0
+			//specular    1       1       1       3.2000
+			texture yellow.jpg		
+		}
+	}
+}
+material 1399613460_4_0136_Charcoal
+{
+	technique
+	{
+		pass
+		{
+			ambient     0       1       0
+			diffuse     0       1       0
+			specular    0       1       0
+			texture green.jpg		
+		}
+	}
+}
+material 1399613460_5_0131_Silver
+{
+	technique
+	{
+		pass
+		{
+			ambient     1       0       0
+			diffuse     1       0       0
+			specular    1       0       0
+			//texture red.jpg		
+		}
+	}
+}
+material 1399613460_6_0133_Gray
+{
+	technique
+	{
+		pass
+		{
+			ambient     0.5       0.5       0.5
+			diffuse     0.5       0.5       0.5
+			specular    0.5       0.5       0.5
+            
+            texture_unit
+            {
+                texture nm_up.png
+            }
+
+		}
+	}
+}
+material 1399613460_SketchupDefault
+{
+	technique
+	{
+		pass
+		{
+			//ambient     1       1       1       1
+			//diffuse     0.80    0.00    0.00    1.0
+			//specular    1       1       1       3.2000
+			texture player.jpg		
+		}
+	}
+}

@@ -15,35 +15,36 @@ particle_system Angst/Laser
        emission_rate   500
        time_to_live     0.5
        direction       0 0 -1
-       velocity       1250
+       velocity       1500
        colour 0.25 1.0 0.0
     }
 }
 
 particle_system Angst/Smoke
 {
-    	material        	Examples/Smoke
-    	particle_width  	55
-    	particle_height 	55
-    	cull_each       	true
-    	quota           	500
-    	billboard_type  	point
-		sorted				true
-    
-    	// Area emitter
-    	emitter Point
-    	{
+    material        	Examples/Smoke
+    particle_width  	35
+    particle_height 	35
+    cull_each       	true
+    quota           	500
+    billboard_type  	point
+    sorted				true
+
+    // Area emitter
+    emitter Point
+    {
 		angle               		11
-        	emission_rate       		15
-        	time_to_live        		4
-        	direction           		0 1 0
-        	velocity_min        		150
-        	velocity_max        		240    	
+        emission_rate       		15
+        time_to_live        		4
+        direction           		0 1 0
+        velocity_min        		150
+        velocity_max        		240
+        //position                  0 0 10
 	}
 
 	affector ColourImage
 	{
-		image		smokecolors.png
+		image		smokecolors2.png
 	}
 
    	affector Rotator
@@ -56,7 +57,7 @@ particle_system Angst/Smoke
 
    	affector Scaler
    	{
-       	rate 	100
+       	rate 	50
    	}
 
 }
@@ -64,23 +65,24 @@ particle_system Angst/Smoke
 particle_system Angst/JetEngine1
 {
 	material 		Examples/Flare
-	particle_width 	25
-	particle_height	25
+	particle_width 	10
+	particle_height	10
 	cull_each		false
 	quota			200
 	billboard_type	point
+    local_space     true
 
 	emitter Point
 	{
 		angle 5
-		emission_rate 100
-        time_to_live    1
-        direction       0 -1 0
-        velocity_min    250
-        velocity_max    300
+		emission_rate   120
+        time_to_live    0.4
+        position        -15 2 0
+        direction       -1 0 0
+        velocity_min    50
+        velocity_max    100
         colour_range_start  1 1 0.5
         colour_range_end    1 0.8 0.3
-		
 	}
 	affector ColourFader
 	{
@@ -88,6 +90,11 @@ particle_system Angst/JetEngine1
 		green -1
 		blue -1
 	}
+    
+   	affector Scaler
+   	{
+       	rate 	-20
+   	}
 	
 }
 particle_system Angst/JetEngine2
@@ -98,18 +105,19 @@ particle_system Angst/JetEngine2
 	cull_each		false
 	quota			200
 	billboard_type	point
+    local_space     true
 
 	emitter Point
 	{
 		angle 3
-		emission_rate 100
-        time_to_live    1
-        direction       0 -1 0
-        velocity_min    350
-        velocity_max    400
+		emission_rate   120
+        time_to_live    0.4
+        position        -15 2 0
+        direction       -1 0 0
+        velocity_min    50
+        velocity_max    100
         colour_range_start  0.5 1 1
         colour_range_end    0.3 0.8 1
-		
 	}
 	affector ColourFader
 	{
@@ -117,7 +125,10 @@ particle_system Angst/JetEngine2
 		green -1
 		blue -0.5
 	}
-	
+   	affector Scaler
+   	{
+       	rate 	-20
+   	}
 }
 
 particle_system Angst/Sun
@@ -237,4 +248,106 @@ particle_system Angst/Snow
 	{
 		randomness	10
 	}
+}
+
+particle_system Angst/Explosion
+{
+    	material        	Examples/Smoke
+    	particle_width  	35
+    	particle_height 	35
+    	cull_each       	true
+    	quota           	50
+    	billboard_type  	point
+    
+    	// Area emitter
+    	emitter Point
+    	{
+		angle               		180
+        	emission_rate           25
+        	time_to_live_min        2
+            time_to_live_max        3
+        	direction               1 1 1
+        	velocity_min            2
+        	velocity_max            10
+	}
+
+	affector ColourImage
+	{
+		image		explodecolors.png
+	}
+
+   	affector Rotator
+   	{
+        	rotation_range_start  		0
+        	rotation_range_end   	 	360
+        	rotation_speed_range_start  	-60
+        	rotation_speed_range_end    	200
+   	}
+
+   	affector Scaler
+   	{
+       	rate 	100
+   	}
+    
+    affector DirectionRandomiser
+    {
+        randomness          3
+    }
+
+}
+
+particle_system Angst/Firework
+{
+    material Examples/Flare
+    point_rendering            false
+    particle_width             10
+    particle_height            10
+    cull_each                  false
+    quota                      1000
+    emit_emitter_quota         10
+    billboard_type             point
+    
+    // Emitter that emits multiple Point emitters with name 'explosion'
+    emitter Box
+    {
+        name                    mainEmitter
+        emit_emitter            explosion
+        angle                   30
+        emission_rate           1000
+        time_to_live            3
+        direction               0 1 0
+        velocity                200
+    }
+
+    // This Point emitter is emitted by the Box emitter and emits billboard particles itself
+    emitter Point
+    {
+        name                    explosion
+        angle                   180
+        emission_rate           1000
+        time_to_live            2
+        direction               0 1 0
+        velocity                80
+        duration                0.1
+        repeat_delay_min        2
+        repeat_delay_max        3
+    }
+
+    // Make em float downwards
+    affector LinearForce
+    {
+        force_vector            0 -100 0
+        force_application       add
+    }
+
+    // Give em some nice colours
+    affector ColourInterpolator
+    {
+        time0                   0
+        colour0                 1 1 0
+        time1                   0.5
+        colour1                 1 0 0
+        time2                   0.9
+        colour2                 0 0 1
+    }
 }

@@ -91,7 +91,9 @@ class Explode( Command ):
         self.ent.desiredYaw = self.ent.yaw
         self.ent.desiredRoll = self.ent.roll
         self.ent.desiredSpeed = 0
+        self.ent.speed = 0
         self.timer = 2.0
+        self.ent.flag = "Dead"
         
     def tick(self, dt):
         self.ent.desiredSpeed = 0
@@ -115,6 +117,7 @@ class Ram( Command ):
         if self.ent.distance < 75:
             # Explode
             self.target.damage(self.ent.explodeDmg)
+            self.ent.damage(self.ent.explodeDmg)
             self.ent.unitai.addCommand( Explode(self.ent) )
             return True
         # Set Planar Orientation (Yaw)
