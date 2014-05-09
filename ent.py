@@ -1,3 +1,5 @@
+# Entities ------------------------------------------------------------------- #
+
 from vector        import Vector3
 from physics       import Physics
 from render        import Renderer
@@ -6,7 +8,8 @@ from pathing       import Pathing
 import command
 import utils
 
-#-----------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+
 class Entity:
 
     aspectTypes = []
@@ -39,7 +42,6 @@ class Entity:
             aspect.tick(dtime)
         #print "Delta: yaw:%f, pitch:%f, roll:%f\n" % (self.deltaYaw, self.deltaPitch, self.deltaRoll)
         
-        
     def delete(self):
         node = self.renderer.delete()
         self.aspects = []
@@ -52,16 +54,19 @@ class Entity:
             self.unitai.setCommand( command.Explode(self) )
             return self.points
         elif self.health <= 0:
+            self.engine.sndMgr.playSound(self.engine.sndMgr.explode) #, self.pos )
             self.unitai.setCommand( command.Crash(self) )
-            self.unitai.addCommand( command.Explode(self) )
+            #self.unitai.addCommand( command.Explode(self) )
             return self.points
-        return 0
+        else:
+            self.engine.sndMgr.playSound(self.engine.sndMgr.explode) #, self.pos )
+            return 0
         
     def __str__(self):
         x = "---\nEntity: %s \nPos: %s, Vel: %s,  mesh = %s\nSpeed: %f, Heading: %f" % (self.uiname, str(self.pos), str(self.vel), self.mesh, self.speed, self.yaw)
         return x
 
-#---------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
 
 class PlayerJet(Entity):
     def __init__(self, engine, id, pos = Vector3(0,0,0), orientation = 0, speed = 500):
@@ -90,7 +95,7 @@ class PlayerJet(Entity):
         # Roll -------------------------
         self.desiredRoll = orientation
         self.roll = orientation
-        self.rollRate  = 90
+        self.rollRate  = 75
         
     @property
     def pathing(self):
@@ -104,9 +109,10 @@ class PlayerJet(Entity):
 
     def damage(self, amount):
         self.health -= amount
+        self.engine.sndMgr.playSound(self.engine.sndMgr.explode) #, self.pos )
         print self.uiname + " Health: " + str(self.health) + '/' + str(self.maxHealth)
             
-#---------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
 
 class EnemyJet(Entity):
     def __init__(self, engine, id, pos = Vector3(0,0,0), orientation = 0, speed = 525):
@@ -119,7 +125,10 @@ class EnemyJet(Entity):
         self.maxHealth = 50
         self.health = 50
         self.points = 25
-        self.fireCooldown = 20
+        self.fireCooldown = 10
+        self.distance = 10000
+        self.difference = -1
+        self.explodeDmg = 50
         # Speed ------------------------
         self.acceleration = 100
         self.maxSpeed = speed
@@ -150,16 +159,18 @@ class EnemyJet(Entity):
         
     def fire(self):
         self.engine.entityMgr.createMissile(Missile, self)
-        self.fireCooldown = 18
+        self.fireCooldown = 12
         
     def tick(self, dtime):
         Entity.tick(self, dtime)
-        if self.fireCooldown < 0 < self.health:
-            self.fire()
-        else:
-            self.fireCooldown -= dtime
+        if 50 < self.distance < 1000 and self.difference > 0:
+            print self.uiname + ": cd: " + str(self.fireCooldown)
+            if self.fireCooldown < 0 < self.health:
+                self.fire()
+            else:
+                self.fireCooldown -= dtime
             
-#---------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
 
 class Missile(Entity):
     def __init__(self, engine, id, source):
@@ -173,6 +184,8 @@ class Missile(Entity):
         self.health = 10
         self.points = 5
         self.duration = 10
+        self.distance = 10000
+        self.explodeDmg = 25
         # Speed ------------------------
         self.acceleration = 50
         self.maxSpeed = 1000
@@ -210,4 +223,4 @@ class Missile(Entity):
         else:
             self.duration -= dtime
             
-# ------------------------------------------------------------------------------------------------ #
+# Entities ------------------------------------------------------------------- #

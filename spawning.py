@@ -23,4 +23,3 @@ class SpawnCycle:
             return True
         else:
             return False
-        

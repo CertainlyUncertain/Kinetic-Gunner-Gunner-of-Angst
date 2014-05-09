@@ -1,3 +1,5 @@
+# Game Manager --------------------------------------------------------------- #
+
 from vector import Vector3
 from spawning import *
 from expression import Expression
@@ -59,11 +61,12 @@ class GameMgr:
                         min = result.second
         if targ:
             print "Direct Hit! on " + targ.uiname
-            self.engine.sndMgr.playSound(self.engine.sndMgr.explode) #, targ.pos )
             self.score += targ.damage( 25 )
         self.engine.sndMgr.playSound(self.engine.sndMgr.laser)
         self.weaponHeat += 15
         self.weaponCooldown = 0.5
+        self.engine.gfxMgr.laserTimer = self.engine.gfxMgr.laserDuration
+        self.engine.gfxMgr.laser.setVisible(True)
 
     def weapon2(self):
         mouseRay = self.engine.gfxMgr.camera.getCameraToViewportRay(0.5, 0.5)
@@ -71,9 +74,16 @@ class GameMgr:
             result  =  mouseRay.intersects(ent.renderer.oEnt.getWorldBoundingBox())
             if result.first:
                 print "Direct Hit! on " + ent.uiname
-                ent.unitai.setCommand( command.Crash(ent) )
-                ent.unitai.addCommand( command.Follow(ent, self.engine.entityMgr.player, self.createRandomOffset()) )
+                self.score += targ.damage( 25 )
+        for eid, ent in self.engine.entityMgr.missiles.iteritems():
+            result  =  mouseRay.intersects(ent.renderer.oEnt.getWorldBoundingBox())
+            if result.first:
+                print "Direct Hit! on " + ent.uiname
+                self.score += targ.damage( 25 )
+        self.weaponHeat += 35
         self.weaponCooldown = 1.0
+        self.engine.gfxMgr.laserTimer = self.engine.gfxMgr.laserDuration
+        self.engine.gfxMgr.laser.setVisible(True)
                 
     def weapon3(self):
         raySceneQuery = self.engine.gfxMgr.sceneManager.createRayQuery(ogre.Ray())
@@ -120,7 +130,7 @@ class GameMgr:
             self.engine.sndMgr.playMusic( "bg1.wav" )
             self.currentLevel += 1
             # Check for last level?
-            if self.currentLevel > self.maxLevel:
+            if self.currentLevel > self.lastLevel:
                 self.currentLevel = 1
         # else: Defeat
         else:
@@ -144,7 +154,7 @@ class GameMgr:
         player.pathing.setMultiple( speed, yaw, pitch )
             
         self.spawns = [ SpawnCycle( [SpawnGroup(ent.EnemyJet, 2)], 15), SpawnCycle( [SpawnGroup(ent.EnemyJet, 3)], 20) ]
-        self.levelTimer = 270
+        self.levelTimer = 120
         # Create Terrain
         self.engine.gfxMgr.setupScene1()
         # Set BGM
@@ -162,7 +172,7 @@ class GameMgr:
         player.pathing.setMultiple( speed, yaw, pitch )
             
         self.spawns = [ SpawnCycle( [SpawnGroup(ent.EnemyJet, 2)], 15), SpawnCycle( [SpawnGroup(ent.EnemyJet, 3)], 10), SpawnCycle( [SpawnGroup(ent.EnemyJet, 2)], 20) ]
-        self.levelTimer = 300
+        self.levelTimer = 150
         # Create Terrain
         self.engine.gfxMgr.setupScene2()
         # Set BGM
@@ -205,11 +215,11 @@ class GameMgr:
                         self.spawns[self.spawnIndex].spawn(self.engine.entityMgr)
                         self.spawnIndex = (self.spawnIndex + 1) % len(self.spawns)
         else:
-            if self.engine.inputMgr.MB_Left_Down and not self.mousWasDown:
+            if self.engine.inputMgr.MB_Left_Down and not self.mouseWasDown:
                 # Do stuff
                 self.loadLevel()
         # Save Previous Mouse State
-        self.mousWasDown = self.engine.inputMgr.MB_Left_Down
+        self.mouseWasDown = self.engine.inputMgr.MB_Left_Down
 
     def crosslink(self):
         self.loadLevel()
@@ -217,3 +227,4 @@ class GameMgr:
     def stop(self):
         pass
 
+# Game Manager --------------------------------------------------------------- #

@@ -80,6 +80,8 @@ class CamMgr:
     def clear(self):
         self.camYawNode = None
         self.camPitchNode = None
+        self.camYaw = 180.0
+        self.camPitch = 0.0
         
     def stop(self):
         self.camera = None

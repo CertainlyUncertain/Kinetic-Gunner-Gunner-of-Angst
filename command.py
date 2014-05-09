@@ -1,7 +1,11 @@
+# Commands ------------------------------------------------------------------- #
+
 from vector        import Vector3
 import utils
 import math
 import ent
+
+#------------------------------------------------------------------------------#
 
 class Command:
     def __init__(self, ent):
@@ -15,6 +19,7 @@ class Command:
     def tick(self, dtime):
         pass
 
+#------------------------------------------------------------------------------#
 
 class Move( Command ):
     def __init__(self, ent, targ):
@@ -23,11 +28,13 @@ class Move( Command ):
         
     def tick(self, dt):
         return True
-        
+
+#------------------------------------------------------------------------------#
+
 class Crash( Command ):
     def __init__(self, ent):
         Command.__init__(self, ent)
-        self.ent.desiredPitch = -45
+        self.ent.desiredPitch = -40
         self.ent.desiredSpeed = self.ent.speed
         self.ent.desiredYaw = self.ent.yaw
         self.ent.desiredRoll = self.ent.roll
@@ -69,18 +76,21 @@ class Crash( Command ):
             ## Check for Done
         if self.timer < 0:
             ## Return True/False
+            self.ent.unitai.addCommand( Explode(self.ent) )
             return True
             ## Die
         return False
+        
+#------------------------------------------------------------------------------#
 
 class Explode( Command ):
     def __init__(self, ent):
         Command.__init__(self, ent)
-        #self.ent.desiredPitch = self.ent.pitch
-        #self.ent.desiredSpeed = self.ent.speed
-        #self.ent.desiredYaw = self.ent.yaw
-        #self.ent.desiredRoll = self.ent.roll
-        #self.ent.desiredSpeed = 0
+        self.ent.desiredPitch = self.ent.pitch
+        self.ent.desiredSpeed = self.ent.speed
+        self.ent.desiredYaw = self.ent.yaw
+        self.ent.desiredRoll = self.ent.roll
+        self.ent.desiredSpeed = 0
         self.timer = 2.0
         
     def tick(self, dt):
@@ -89,8 +99,10 @@ class Explode( Command ):
         if self.timer < 0:
             self.ent.engine.entityMgr.dead.append(self.ent)
             return True
-        return False  
-   
+        return False
+        
+#------------------------------------------------------------------------------#
+
 class Ram( Command ):
     def __init__(self, ent, targ):
         Command.__init__(self, ent)
@@ -98,11 +110,11 @@ class Ram( Command ):
 
     def tick(self, dtime):
         # Check Planar Distance
-        sqrDist = (self.target.pos.x - self.ent.pos.x)**2 + (self.target.pos.z - self.ent.pos.z)**2
+        self.ent.distance = math.sqrt((self.target.pos.x - self.ent.pos.x)**2 + (self.target.pos.z - self.ent.pos.z)**2)
         # Check Distance
-        if sqrDist < 2500:
+        if self.ent.distance < 75:
             # Explode
-            self.target.damage(25)
+            self.target.damage(self.ent.explodeDmg)
             self.ent.unitai.addCommand( Explode(self.ent) )
             return True
         # Set Planar Orientation (Yaw)
@@ -117,16 +129,18 @@ class Ram( Command ):
             self.ent.desiredSpeed = self.ent.maxSpeed
         # Height Difference (Pitch)
         difference = self.target.pos.y - self.ent.pos.y
-        self.ent.desiredPitch = math.degrees(math.atan2(difference, math.sqrt(sqrDist)))
+        self.ent.desiredPitch = math.degrees(math.atan2(difference, self.ent.distance))
         #return False
         
-        print "Self: %s, Target Name: %s, Distance2: %f, Angle: %f" % (self.ent.uiname, self.target.uiname, sqrDist, angle)
-        print "CURRENT:: yaw: %f, speed: %f, pitch: %f" % (self.ent.yaw, self.ent.speed, self.ent.pitch)
-        print "DESIRED:: yaw: %f, speed: %f, pitch: %f" % (self.ent.desiredYaw, self.ent.desiredSpeed, self.ent.desiredPitch)
-        print "Target:: " + self.target.uiname
-        print "Target Vel: " + str(self.target.vel)
-        print "Self Vel: " + str(self.ent.vel) +'\n'
-     
+        # print "Self: %s, Target Name: %s, Distance2: %f, Angle: %f" % (self.ent.uiname, self.target.uiname, self.ent.distance, angle)
+        # print "CURRENT:: yaw: %f, speed: %f, pitch: %f" % (self.ent.yaw, self.ent.speed, self.ent.pitch)
+        # print "DESIRED:: yaw: %f, speed: %f, pitch: %f" % (self.ent.desiredYaw, self.ent.desiredSpeed, self.ent.desiredPitch)
+        # print "Target:: " + self.target.uiname
+        # print "Target Vel: " + str(self.target.vel)
+        # print "Self Vel: " + str(self.ent.vel) +'\n'
+        
+#------------------------------------------------------------------------------#
+
 class Follow( Command ):
     def __init__(self, ent, targ):
         Command.__init__(self, ent)
@@ -134,11 +148,11 @@ class Follow( Command ):
 
     def tick(self, dtime):
         # Check Planar Distance
-        distance = math.sqrt((self.target.pos.x - self.ent.pos.x)**2 + (self.target.pos.z - self.ent.pos.z)**2)
+        self.ent.distance = math.sqrt((self.target.pos.x - self.ent.pos.x)**2 + (self.target.pos.z - self.ent.pos.z)**2)
         # Set Planar Orientation (Yaw)
         self.ent.desiredYaw = self.getDesiredHeadingToTargetPosition(self.target.pos)
         # Check Distance
-        if distance < 50:
+        if self.ent.distance < 100:
             if math.fabs(utils.diffAngle(self.ent.yaw, self.ent.desiredYaw)) < 90:
                 self.ent.desiredSpeed = self.target.speed
             else:
@@ -148,13 +162,16 @@ class Follow( Command ):
             self.ent.desiredSpeed = self.ent.maxSpeed
         # Height Difference (Pitch)
         difference = self.target.pos.y - self.ent.pos.y
-        self.ent.desiredPitch = math.degrees(math.atan2(difference, distance))
-        print "CURRENT:: yaw: %f, speed: %f, pitch: %f" % (self.ent.yaw, self.ent.speed, self.ent.pitch)
-        print "DESIRED:: yaw: %f, speed: %f, pitch: %f" % (self.ent.desiredYaw, self.ent.desiredSpeed, self.ent.desiredPitch)
-        print "Target:: " + self.target.uiname
-        print "VEL:: Target: " + str(self.target.vel)
-        print "VEL:: Self: " + str(self.ent.vel) +'\n'
-   
+        self.ent.desiredPitch = math.degrees(math.atan2(difference, self.ent.distance))
+        
+        # print "CURRENT:: yaw: %f, speed: %f, pitch: %f" % (self.ent.yaw, self.ent.speed, self.ent.pitch)
+        # print "DESIRED:: yaw: %f, speed: %f, pitch: %f" % (self.ent.desiredYaw, self.ent.desiredSpeed, self.ent.desiredPitch)
+        # print "Target:: " + self.target.uiname
+        # print "VEL:: Target: " + str(self.target.vel)
+        # print "VEL:: Self: " + str(self.ent.vel) +'\n'
+        
+#------------------------------------------------------------------------------#
+
 class OffsetFollow( Command ):
     def __init__(self, ent, targ, offset = Vector3(0,0,0)):
         Command.__init__(self, ent)
@@ -170,11 +187,11 @@ class OffsetFollow( Command ):
         point.x = self.target.pos.x + self.offset * math.cos(angleRad)
         point.z = self.target.pos.z + self.offset * -math.sin(angleRad)
         # Check Planar Distance
-        distance = math.sqrt((point.x - self.ent.pos.x)**2 + (point.z - self.ent.pos.z)**2)
+        self.ent.distance = math.sqrt((point.x - self.ent.pos.x)**2 + (point.z - self.ent.pos.z)**2)
         # Set Planar Orientation (Yaw)
         self.ent.desiredYaw = self.getDesiredHeadingToTargetPosition(point)
         # Check Distance
-        if distance < 100:
+        if self.ent.distance < 100:
             if math.fabs(utils.diffAngle(self.ent.yaw, self.ent.desiredYaw)) < 90:
                 self.ent.desiredSpeed = self.target.speed
             else:
@@ -183,8 +200,8 @@ class OffsetFollow( Command ):
         else:
             self.ent.desiredSpeed = self.ent.maxSpeed
         # Height Difference (Pitch)
-        difference = point.y - self.ent.pos.y
-        self.ent.desiredPitch = math.degrees(math.atan2(difference, distance))
+        self.ent.difference = self.ent.pos.y - point.y
+        self.ent.desiredPitch = math.degrees(math.atan2(-self.ent.difference, self.ent.distance))
 
         # print "Self: %s, Target Name: %s" % (self.ent.uiname, self.target.uiname)
         # print "CURRENT:: yaw: %f, speed: %f, pitch: %f" % (self.ent.yaw, self.ent.speed, self.ent.pitch)
@@ -192,7 +209,9 @@ class OffsetFollow( Command ):
         # print "Target:: " + self.target.uiname
         # print "Target Vel: " + str(self.target.vel)
         # print "Self Vel: " + str(self.ent.vel) +'\n'
-            
+        
+#------------------------------------------------------------------------------#
+
 class Intercept( Command ):
     def __init__(self, ent, targ):
         Command.__init__(self, ent)
@@ -268,4 +287,4 @@ class Intercept( Command ):
                                                   # point.x - self.ent.pos.x )
         # self.ent.desiredHeading = utils.fixAngle(self.ent.desiredHeading)
         
-#---------------------------------------------------------------------------------------------------
+# Commands ------------------------------------------------------------------- #

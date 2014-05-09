@@ -11,7 +11,7 @@ Tentative Meeting Times
 Thurs 5/8:  7:00pm
 Fri 5/9:    12:00pm
 
-http://sourceforge.net/projects/nxtank/files/ (Python Ogre program that unzips the files when you run it. Could be useful as reference.)
+http://sourceforge.net/projects/nxtank/files/ (Python Ogre program that unzips the code files when you run it. Code could be useful as reference.)
 ----------
    Sound
 ----------
@@ -26,6 +26,7 @@ http://sourceforge.net/projects/nxtank/files/ (Python Ogre program that unzips t
 ----------
     http://www.ogre3d.org/tikiwiki/tiki-index.php?page=Projecting+3D+position+and+size+to+2D&structure=Cookbook  (Projecting 3D to 2D)
     http://www.ogre3d.org/tikiwiki/Manual+Resource+Loading#Font (Some Font Stuff)
+    http://www.ogre3d.org/docs/manual/manual_41.html#Overlay-Scripts (Overlays in scripts instead of code)
 /    Align using screen size (gfxMgr.viewPort.actualWidth, gfxMgr.viewPort.actualHeight)
 /    Crosshairs (Preferably One Square with Transparency)
     Score ( Text, able to be updated )
@@ -43,6 +44,7 @@ http://sourceforge.net/projects/nxtank/files/ (Python Ogre program that unzips t
     http://wiki.python-ogre.org/index.php?title=Intermediate_Tutorial_5 (Static Geometry)
     http://www.ogre3d.org/tikiwiki/tiki-index.php?page=Intermediate+Tutorial+5&structure=Tutorials (Static Geometry)
     http://www.ogre3d.org/tikiwiki/tiki-index.php?page=Ogre+Terrain+System (Terrain, but only works for Ogre 1.7+)
+    http://wiki.python-ogre.org/index.php?title=CodeSnippets_Using_ogreterrain (terrain in python)
     
     Player Plane and Turret Models
     Enemy Plane Models (Several)
@@ -66,28 +68,7 @@ http://sourceforge.net/projects/nxtank/files/ (Python Ogre program that unzips t
     http://www.ogre3d.org/docs/manual/manual_36.html (Particle Emitters)
     http://www.ogre3d.org/docs/manual/manual_40.html (Particle Affectors)
     http://www.ogre3d.org/docs/api/1.9/classOgre_1_1ParticleSystem.html  (Laser? Stuff)
-    particle_system Space/Laser
-    {
-        material        Examples/Flare
-        particle_width  3
-        particle_height 3
-        cull_each       false
-        quota           1000000
-        billboard_type  point
-        local_space true
 
-        // Area emitter
-        emitter Point
-        {
-           angle           0
-           emission_rate   500
-           time_to_live_min 1000
-           time_to_live_max 1000
-           direction       0 0 -1
-           velocity       1000
-           colour 1.0 0.27 0.0
-        }
-    }
     
     http://www.ogre3d.org/docs/api/1.9/classOgre_1_1BillboardChain.html
     BillboardChain bbchain;
