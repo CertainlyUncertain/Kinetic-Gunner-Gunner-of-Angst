@@ -1,8 +1,8 @@
-# Input manager. Initialize and manage keyboard and mouse. Buffered and unbuffered input
+# Input Manager -------------------------------------------------------------- #
+# Initialize and manage keyboard and mouse. Buffered and unbuffered input      #
+
 import ogre.renderer.OGRE as ogre
 import ogre.io.OIS as OIS
-
-
 from vector import Vector3
 import os
 import command
@@ -16,7 +16,6 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
         OIS.JoyStickListener.__init__(self)
         self.move = 500
         self.rotate = 25
-        self.toggle = 0.1
         self.selectionRadius = 100
         self.MB_Left_Down = False
         self.MB_Right_Down = False
@@ -85,7 +84,7 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
         # Swap Cameras (Between First-Person and Debug Views)
         if self.keyboard.isKeyDown(OIS.KC_G):
             self.engine.camMgr.swap()
-        # Pause
+        # Pause ------------------------DEBUG-----------------------------------
         if self.keyboard.isKeyDown(OIS.KC_SPACE):
             time.sleep(10)
         return True
@@ -183,4 +182,4 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
         ms.width = width
         ms.height = height
          
-# ----------------------------------------------------------------------------------------------- #
+# Input Manager -------------------------------------------------------------- #

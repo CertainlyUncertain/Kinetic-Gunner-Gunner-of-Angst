@@ -23,7 +23,3 @@ class Expression:
             return True
         else:
             return False
-
-
-
-

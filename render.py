@@ -1,5 +1,6 @@
-from vector import Vector3
+# Renderer ------------------------------------------------------------------- #
 
+from vector import Vector3
 import utils
 import math
 import ogre.renderer.OGRE as ogre
@@ -42,4 +43,5 @@ class Renderer:
         self.oNode = None
         self.ent = None
         return node
-# --------------------------------------------------------------------------- #
+        
+# Renderer ------------------------------------------------------------------- #

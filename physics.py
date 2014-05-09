@@ -1,5 +1,6 @@
-from vector import Vector3
+# Physics -------------------------------------------------------------------- #
 
+from vector import Vector3
 import utils
 import math
 
@@ -34,7 +35,7 @@ class Physics:
         self.ent.pitch = utils.fixAngle( self.ent.pitch + self.ent.deltaPitch)
         # Roll ----------------------------------
         if dtime > 0.001:
-            self.ent.desiredRoll = -self.ent.deltaYaw / dtime
+            self.ent.desiredRoll = -self.ent.deltaYaw / dtime * 0.75
         timeScaledRoll = self.ent.rollRate * dtime
         angleDiff = utils.diffAngle(self.ent.desiredRoll, self.ent.roll)
         self.ent.deltaRoll = utils.clamp(angleDiff, -timeScaledRoll, timeScaledRoll)
@@ -42,4 +43,5 @@ class Physics:
         # print "roll: %f, desiredRoll: %f, rollRate: %f" % (self.ent.roll, self.ent.desiredRoll, self.ent.rollRate)
         # print "---"
         self.ent.roll = utils.fixAngle( self.ent.roll + self.ent.deltaRoll)
-#-----------------------------------------------------------------------------------------
+        
+# Physics -------------------------------------------------------------------- #
