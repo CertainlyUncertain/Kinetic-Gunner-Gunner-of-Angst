@@ -6,10 +6,11 @@ TO BE DONE
 *excel credits*
 *gamename.tgz*
 
-Tentative Meeting Times
-=======================
-Thurs 5/8:  7:00pm
-Fri 5/9:    12:00pm
+    ***CHANGES***
+    Angst.particle
+    SmokeColor2
+    Test.material
+    Angst.material?
 
 http://sourceforge.net/projects/nxtank/files/ (Python Ogre program that unzips the code files when you run it. Code could be useful as reference.)
 ----------

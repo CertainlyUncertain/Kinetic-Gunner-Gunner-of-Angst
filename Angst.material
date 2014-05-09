@@ -258,4 +258,42 @@ material Angst/Ocean2_Cg
 
 	}
 }
-
+material Angst/Player
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture player.jpg
+			}
+		}
+	}
+}
+material Angst/Enemy
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture enemy.jpg
+			}
+		}
+	}
+}
+material Angst/Missile
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture missile.jpg
+			}
+		}
+	}
+}
