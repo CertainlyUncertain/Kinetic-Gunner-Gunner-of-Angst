@@ -1,3 +1,5 @@
+# Utilities ------------------------------------------------------------------ #
+
 import math
 
 def clamp(val, min, max):
@@ -19,3 +21,4 @@ def fixAngle(angle):
 def diffAngle(angle1, angle2):
     return fixAngle(angle1 - angle2)
 
+# Utilities ------------------------------------------------------------------ #

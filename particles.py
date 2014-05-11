@@ -7,7 +7,10 @@ import ent
 import ogre.renderer.OGRE as ogre
 
 class Particles:
+    ''' Creates, Manages, and Deletes Particles for game Entities. '''
+    
     def __init__(self, ent):
+        ''' Creates and Attaches Particle Effects. '''
         self.ent = ent
         self.thruster = None
         # Create Smoke and Explosion Particles
@@ -21,24 +24,22 @@ class Particles:
         
         # Create Thrusters
         if ent.flag == "Player":
-            print "THRUSTERS ATTACHED TO PLAYER"
-            self.thruster = self.ent.engine.gfxMgr.sceneManager.createParticleSystem("Thrust" + self.ent.uiname, "Angst/JetEngine1")
+            self.thruster = self.ent.engine.gfxMgr.sceneManager.createParticleSystem("Thrust" + self.ent.uiname, "Angst/PlayerThruster")
             self.ent.renderer.oNode.attachObject(self.thruster)
             pass
             
         elif ent.flag == "Enemy":
-            print "THRUSTERS ATTACHED TO ENEMY"
-            self.thruster = self.ent.engine.gfxMgr.sceneManager.createParticleSystem("Thrust" + self.ent.uiname, "Angst/JetEngine2")
+            self.thruster = self.ent.engine.gfxMgr.sceneManager.createParticleSystem("Thrust" + self.ent.uiname, "Angst/EnemyThruster")
             self.ent.renderer.oNode.attachObject(self.thruster)
             pass
             
         elif ent.flag == "Missile":
-            print "THRUSTERS ATTACHED TO MISSILE"
-            self.thruster = self.ent.engine.gfxMgr.sceneManager.createParticleSystem("Thrust" + self.ent.uiname, "Angst/JetEngine1")
+            self.thruster = self.ent.engine.gfxMgr.sceneManager.createParticleSystem("Thrust" + self.ent.uiname, "Angst/MissileThruster")
             self.ent.renderer.oNode.attachObject(self.thruster)
             pass
         
     def tick(self, dtime):
+        ''' Updates Particle Visibility. '''
         # Particles
         if self.ent.flag == "Dead":
             self.smoke.setEmitting(False)
@@ -51,6 +52,7 @@ class Particles:
             pass
         
     def delete(self):
+        ''' Detaches and Hides Particles. '''
         self.smoke.setEmitting(False)
         self.ent.renderer.oNode.detachObject(self.smoke)
         self.explosion.setEmitting(False)

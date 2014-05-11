@@ -1,15 +1,39 @@
+# ========================== Start Copyright Notice ========================== #
+#                                                                              #
+#   Copyright 2014 F.D.I.S.                                                    #
+#   This file is part of Kinetic Gunner: Gunner of Angst                       #
+#                                                                              #
+#   For the latest version, please visit:                                      #
+#   https://github.com/CertainlyUncertain/Kinetic-Gunner-Gunner-of-Angst       #
+#                                                                              #
+#   This program is free software: you can redistribute it and/or modify       #
+#   it under the terms of the GNU General Public License as published by       #
+#   the Free Software Foundation, either version 3 of the License, or          #
+#   (at your option) any later version.                                        #
+#                                                                              #
+#   This program is distributed in the hope that it will be useful,            #
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of             #
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              #
+#   GNU General Public License for more details.                               #
+#                                                                              #
+#   You should have received a copy of the GNU General Public License          #
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.      #
+#                                                                              #
+# =========================== End Copyright Notice =========================== #
+
 # Input Manager -------------------------------------------------------------- #
-# Initialize and manage keyboard and mouse. Buffered and unbuffered input      #
 
 import ogre.renderer.OGRE as ogre
 import ogre.io.OIS as OIS
 from vector import Vector3
 import os
-import command
 import time
 
 class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
+    ''' Manages keyboard and mouse, with buffered and unbuffered input. '''
+    
     def __init__(self, engine):
+        ''' Creates Input Listeners and Initializes Variables. '''
         self.engine = engine
         OIS.KeyListener.__init__(self)
         OIS.MouseListener.__init__(self)
@@ -19,8 +43,10 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
         self.selectionRadius = 100
         self.MB_Left_Down = False
         self.MB_Right_Down = False
+        print "Input Manager Created."
 
     def init(self):
+        ''' Sets the Window and Creates Input System and Objects. '''
         windowHandle = 0
         renderWindow = self.engine.gfxMgr.root.getAutoCreatedWindow()
         windowHandle = renderWindow.getCustomAttributeUnsignedLong("WINDOW")
@@ -54,21 +80,14 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
             self.mouse.setEventCallback(self)
             self.windowResized( renderWindow )
  
-        # import random
-        # self.randomizer = random
-        # self.randomizer.seed(None)
-        print "Initialized Input Manager"
+        print "Input Manager Initialized."
 
     def crosslink(self):
+        ''' Links to other Managers. '''
         pass
 
-    def stop(self):
-        self.inputManager.destroyInputObjectKeyboard(self.keyboard)
-        self.inputManager.destroyInputObjectMouse(self.mouse)
-        OIS.InputManager.destroyInputSystem(self.inputManager)
-        self.inputManager = None
-        
     def tick(self, dtime):
+        ''' Update keyboard and mouse. '''
         self.keyboard.capture()
         self.mouse.capture()
         self.handleCamera(dtime)
@@ -77,6 +96,14 @@ class InputMgr(OIS.KeyListener, OIS.MouseListener, OIS.JoyStickListener):
         if self.keyboard.isKeyDown(OIS.KC_ESCAPE):
             self.engine.keepRunning = False
         pass
+        
+    def stop(self):
+        ''' Destory Input Objects and System. '''
+        self.inputManager.destroyInputObjectKeyboard(self.keyboard)
+        self.inputManager.destroyInputObjectMouse(self.mouse)
+        OIS.InputManager.destroyInputSystem(self.inputManager)
+        self.inputManager = None
+        print "Input Manager Stopped."
         
     # Keyboard Listener ----------------------------------------------------- #
     def keyPressed(self, evt):

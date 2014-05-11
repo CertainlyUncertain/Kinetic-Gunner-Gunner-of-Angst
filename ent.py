@@ -9,13 +9,15 @@ from particles     import Particles
 import command
 import utils
 
-#------------------------------------------------------------------------------#
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
 class Entity:
-
+    ''' Base Entity Class. '''
+    
     aspectTypes = []
     
     def __init__(self, engine, id, pos = Vector3(0,0,0), mesh = 'robot.mesh', vel = Vector3(0, 0, 0), yaw = 0):
+        ''' Creation. '''
         self.engine = engine
         # General
         self.eid = id
@@ -36,46 +38,59 @@ class Entity:
         self.yaw = 0.0
 
     def init(self):
+        ''' Creates and Initializes Aspects. '''
         for aspType in self.aspectTypes:
             self.aspects.append(aspType(self))
         
     def tick(self, dtime):
+        ''' Updates Aspects. '''
         for aspect in self.aspects:
             aspect.tick(dtime)
         #print "Delta: yaw:%f, pitch:%f, roll:%f\n" % (self.deltaYaw, self.deltaPitch, self.deltaRoll)
         
     def delete(self):
+        ''' Destroys Aspects. '''
         self.particles.delete()
         node = self.renderer.delete()
         self.aspects = []
         return node
         
     def damage(self, amount):
+        ''' Updates Health, Status, and Command, and plays Sounds. '''
         self.health -= amount
         print self.uiname + " Health: " + str(self.health) + '/' + str(self.maxHealth)
         if self.health <= -(self.maxHealth/2):
+            self.engine.sndMgr.playSound(self.engine.sndMgr.hit) #, self.pos )
             self.unitai.setCommand( command.Explode(self) )
             self.flag = "Dead"
             return self.points
         elif self.health <= 0:
             self.flag = "Crashing"
-            self.engine.sndMgr.playSound(self.engine.sndMgr.explode) #, self.pos )
+            self.engine.sndMgr.playSound(self.engine.sndMgr.jetExplode) #, self.pos )
             self.unitai.setCommand( command.Crash(self) )
             #self.unitai.addCommand( command.Explode(self) )
             return self.points
         else:
             self.flag = "Damaged"
-            self.engine.sndMgr.playSound(self.engine.sndMgr.explode) #, self.pos )
+            self.engine.sndMgr.playSound(self.engine.sndMgr.hit) #, self.pos )
             return 0
         
+    def getBoundingBox(self):
+        ''' Returns Axis-Aligned Bounding Box. '''
+        return self.renderer.oEnt.getWorldBoundingBox()
+        
     def __str__(self):
+        ''' Converts to String. '''
         x = "---\nEntity: %s \nPos: %s, Vel: %s,  mesh = %s\nSpeed: %f, Heading: %f" % (self.uiname, str(self.pos), str(self.vel), self.mesh, self.speed, self.yaw)
         return x
 
-#------------------------------------------------------------------------------#
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
 class PlayerJet(Entity):
+    ''' Player Jet Entity Class. '''
+    
     def __init__(self, engine, id, pos = Vector3(0,0,0), orientation = 0, speed = 500):
+        ''' Creation. '''
         Entity.__init__(self, engine, id, pos = pos, vel = Vector3(0, 0, 0))
         # General ----------------------
         self.aspectTypes = [ Pathing, Physics, Renderer, Particles ]
@@ -119,13 +134,16 @@ class PlayerJet(Entity):
         
     def damage(self, amount):
         self.health -= amount
-        self.engine.sndMgr.playSound(self.engine.sndMgr.explode) #, self.pos )
+        self.engine.sndMgr.playSound(self.engine.sndMgr.hit) #, self.pos )
         print self.uiname + " Health: " + str(self.health) + '/' + str(self.maxHealth)
             
-#------------------------------------------------------------------------------#
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
 class EnemyJet(Entity):
+    ''' Enemy Jet Entity Class. '''
+    
     def __init__(self, engine, id, pos = Vector3(0,0,0), orientation = 0, speed = 525):
+        ''' Creation. '''
         Entity.__init__(self, engine, id, pos = pos, vel = Vector3(0, 0, 0) )
         # General ----------------------
         self.aspectTypes = [ UnitAI, Physics, Renderer, Particles ] #Combat
@@ -136,7 +154,7 @@ class EnemyJet(Entity):
         self.maxHealth = 50
         self.health = 50
         self.points = 25
-        self.fireCooldown = 10
+        self.fireCooldown = 5
         self.distance = 10000
         self.difference = -1
         self.explodeDmg = 50
@@ -172,26 +190,30 @@ class EnemyJet(Entity):
         return self.aspects[3]
         
     def fire(self):
+        ''' Creates an Enemy Missile Entity. '''
         self.engine.entityMgr.createMissile(Missile, self)
-        self.fireCooldown = 12
+        self.fireCooldown = 10
         
     def tick(self, dtime):
+        ''' Updates Firing Cooldown. '''
         Entity.tick(self, dtime)
-        if 50 < self.distance < 1000 and self.difference > 0:
-            print self.uiname + ": cd: " + str(self.fireCooldown)
+        if 100 < self.distance < 3000 and self.difference > 0:
             if self.fireCooldown < 0 < self.health:
                 self.fire()
             else:
                 self.fireCooldown -= dtime
             
-#------------------------------------------------------------------------------#
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
 class Missile(Entity):
+    ''' Enemy Missile Entity Class. '''
+    
     def __init__(self, engine, id, source):
+        ''' Creation. '''
         Entity.__init__(self, engine, id, pos = source.pos, vel = Vector3(0, 0, 0) )
         # General ----------------------
         self.aspectTypes = [ UnitAI, Physics, Renderer, Particles ]
-        self.mesh = 'missile4.mesh' #missile3.mesh / missile.mesh
+        self.mesh = 'missile.mesh' #missile3.mesh / missile.mesh
         self.uiname = 'Missile' + str(id)
         self.flag = "Missile"
         # Combat -----------------------
@@ -218,7 +240,7 @@ class Missile(Entity):
         self.desiredRoll = source.roll
         self.roll = source.roll
         self.rollRate  = 90
-        
+ 
     @property
     def unitai(self):
         return self.aspects[0]
@@ -233,12 +255,22 @@ class Missile(Entity):
         return self.aspects[3]
             
     def tick(self, dtime):
+        ''' Updates Remaining Duration. '''
         Entity.tick(self, dtime)
         if self.duration < 0:
             self.unitai.setCommand( command.Crash(self) )
-            self.unitai.addCommand( command.Explode(self) )
             self.duration = 10
         else:
             self.duration -= dtime
-            
+  
+def damage(self, amount):
+        ''' Updates Health and Command and plays Sounds. '''
+        self.health -= amount
+        print self.uiname + " Health: " + str(self.health) + '/' + str(self.maxHealth)
+        if self.health <= 0:
+            self.engine.sndMgr.playSound(self.engine.sndMgr.missileExplode) #, self.pos )
+            self.unitai.setCommand( command.Explode(self) )
+            self.flag = "Dead"
+            return self.points
+          
 # Entities ------------------------------------------------------------------- #

@@ -7,6 +7,8 @@ import ent
 import ogre.renderer.OGRE as ogre
 
 class Renderer:
+    ''' Creates, Manages, and Deletes ogre SceneNodes and Entities for each game Entity. '''
+    
     def __init__(self, ent):
         ''' Creates ogre SceneNode and Entity and attaches them. '''
         self.ent = ent
@@ -25,7 +27,8 @@ class Renderer:
         ''' Updates SceneNode Position, Orientation and Visibility. '''
         self.oNode.setPosition(self.ent.pos)
         self.oNode.resetOrientation()
-        self.oNode.yaw( ogre.Degree(self.ent.yaw) )
+        self.oNode.yaw( ogre.Degree(self.ent.yaw+90) )
+        # Pitch and Roll reversed due to Model facing
         self.oNode.pitch( ogre.Degree(-self.ent.pitch) )
         self.oNode.roll( ogre.Degree(self.ent.roll) )
         # Check for Explosion
