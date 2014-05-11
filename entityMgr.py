@@ -1,15 +1,41 @@
+# ========================== Start Copyright Notice ========================== #
+#                                                                              #
+#   Copyright 2014 F.D.I.S.                                                    #
+#   This file is part of Kinetic Gunner: Gunner of Angst                       #
+#                                                                              #
+#   For the latest version, please visit:                                      #
+#   https://github.com/CertainlyUncertain/Kinetic-Gunner-Gunner-of-Angst       #
+#                                                                              #
+#   This program is free software: you can redistribute it and/or modify       #
+#   it under the terms of the GNU General Public License as published by       #
+#   the Free Software Foundation, either version 3 of the License, or          #
+#   (at your option) any later version.                                        #
+#                                                                              #
+#   This program is distributed in the hope that it will be useful,            #
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of             #
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              #
+#   GNU General Public License for more details.                               #
+#                                                                              #
+#   You should have received a copy of the GNU General Public License          #
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.      #
+#                                                                              #
+# =========================== End Copyright Notice =========================== #
+
 # Entity Manager ------------------------------------------------------------- #
 
 from vector import Vector3
 import command
 
 class EntityMgr:
+    ''' Creates, manages, and destroys Entities. '''
+    
     def __init__(self, engine):
-        import time
-        print "starting ent mgr"
+        ''' Creation. '''
         self.engine = engine
+        print "Entity Manager Created."
                 
     def init(self):
+        ''' Initialization. '''
         # Player --------
         self.player = None
         ##self.projectiles = {}
@@ -26,14 +52,39 @@ class EntityMgr:
         self.randomizer.seed(None)
         import ent ##--##
         self.entTypes = [ent.PlayerJet, ent.EnemyJet]
+        print "Entity Manager Initialized."
+
+    def crosslink(self):
+        ''' Links to other Managers. '''
+        print "Entity Manager Linked."
+        pass
+        
+    def tick(self, dt):
+        ''' Update Function. '''
+        if self.player:
+            self.player.tick(dt)
+        for eid, ent in self.enemies.iteritems():
+            ent.tick(dt)
+        for eid, ent in self.missiles.iteritems():
+            ent.tick(dt)
+        self.cleanup()
+        
+    def stop(self):
+        ''' Shut Down. '''
+        print "Entity Manager Stopped."
+        pass
+        
+# Entity Manager ------------------------------------------------------------- #
 
     def createPlayer(self, playerType, pos, yaw, speed):
+        ''' Create the Player's Entity. '''
         self.player = playerType(self.engine, 0, pos, yaw, speed)
         self.player.init()
         self.player.renderer.oEnt.setMaterialName ('Angst/Player')
         return self.player
     
     def createEnemy(self, enemyType, pos = None, speed = None):
+        ''' Creates an Enemy Jet Entity. '''
         if pos == None:
             x = self.randomizer.randint(-5000, 5000)
             y = self.randomizer.randint(-500, 2500)
@@ -51,6 +102,7 @@ class EntityMgr:
         return ent
         
     def createMissile(self, missileType, source):
+        ''' Creates an Enemy Missile Entity. '''
         ent = missileType(self.engine, self.nMissiles, source)
         ent.init()
         ent.unitai.addCommand( command.Ram(ent, self.player) )
@@ -59,7 +111,8 @@ class EntityMgr:
         ent.renderer.oEnt.setMaterialName ('Angst/Missile')
         return ent
         
-    def Cleanup(self):
+    def cleanup(self):
+        ''' Deletes Dead Entities. '''
         for ent in self.dead:
             # Get ID
             index = ent.uiname
@@ -78,6 +131,7 @@ class EntityMgr:
         self.dead = []
         
     def clear(self):
+        ''' Clears All Entity References. '''
         # Player --------
         self.player = None
         ##self.projectiles = {}
@@ -91,22 +145,11 @@ class EntityMgr:
         self.dead = []
 
     def createRandomOffset(self):
-        x = self.randomizer.randint(-175, -125)
-        y = self.randomizer.randint(50,100)
+        ''' Creates a random 3D offset. '''
+        x = self.randomizer.randint(-350, -275)
+        y = self.randomizer.randint(75,125)
         i = self.randomizer.randint(1,2)
-        z = self.randomizer.randint(125, 175) * (-1)**i
+        z = self.randomizer.randint(275, 350) * (-1)**i
         return Vector3(x,y,z)
-
-    def tick(self, dt):
-        # for eid, ent in self.ents.iteritems():
-            # ent.tick(dt)
-        if self.player:
-            self.player.tick(dt)
-        for eid, ent in self.enemies.iteritems():
-            ent.tick(dt)
-        for eid, ent in self.missiles.iteritems():
-            ent.tick(dt)
-        # Cleanup
-        self.Cleanup()
         
 # Entity Manager ------------------------------------------------------------- #

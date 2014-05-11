@@ -1,8 +1,13 @@
+# Pathing -------------------------------------------------------------------- #
+
 from expression import Expression
 import math
 
-class Pathing:    
+class Pathing:
+    ''' Updates rate and desired Speed, Yaw, and Pitch using Expressions. '''
+    
     def __init__(self, ent, speed = [], yaw = [], pitch = []):
+        ''' Creation. '''
         self.paths = {}
         self.indices = {}
         self.ent = ent
@@ -17,6 +22,7 @@ class Pathing:
         self.indices['pitch'] = 0
     
     def tick(self, dt):
+        ''' Updates Speed, Yaw, and Pitch from corresponding Expression. '''
         # Yaw ---------------------------------------------
         if len(self.paths['yaw']) > 0:
             rate = self.paths['yaw'][self.indices['yaw']].tick(dt)
@@ -43,8 +49,9 @@ class Pathing:
 
 
     def setMultiple(self, speed = [], yaw = [], pitch = []):
+        ''' Sets Speed, Yaw, and Pitch Expression Lists. '''
         self.paths['speed'] = speed
         self.paths['yaw'] = yaw
         self.paths['pitch'] = pitch
             
-#---------------------------------------------------------------------------------------------------
+# Pathing -------------------------------------------------------------------- #

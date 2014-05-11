@@ -1,8 +1,11 @@
+# UnitAI --------------------------------------------------------------------- #
+
 import command
 
 class UnitAI:
 
     def __init__(self, ent):
+        ''' Creation. '''
         self.ent = ent
         self.commands = []
         
@@ -12,11 +15,16 @@ class UnitAI:
                 self.commands.pop(0)
                     
     def addCommand(self, newCommand):
+        ''' Adds to end of Command List. '''
         self.commands.append( newCommand )
 
     def clearCommands(self):
+        ''' Empties Command List. '''
         self.commands = []
 
     def setCommand(self, newCommand):
+        ''' Replaces Command List. '''
         self.clearCommands()
         self.addCommand( newCommand )
+
+# UnitAI --------------------------------------------------------------------- #
